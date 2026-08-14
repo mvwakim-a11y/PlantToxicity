@@ -58,7 +58,7 @@
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 html{ scroll-behavior: smooth; background: var(--forest-deep); }
 body{
   margin:0;
@@ -408,6 +408,55 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 }
 
 /* ============================================================
+   DENSITY VIEWS — List / Compact (default) / Expanded
+   ============================================================ */
+
+/* List: one row per plant, minimal chrome, maximum scanability */
+.drawer.view-list{
+  grid-template-columns: 1fr;
+  gap: .5rem;
+}
+.drawer.view-list .card{
+  display:grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items:center;
+  column-gap:.7rem;
+  padding: .55rem .8rem;
+  max-width: none;
+}
+.view-list .card__favorite{
+  position:static; grid-column:1; grid-row:1;
+  width:26px; height:26px; font-size:.9rem;
+}
+.view-list .card__stamp{
+  position:static; grid-column:3; grid-row:1;
+  transform:none; clip-path:none; mix-blend-mode:normal;
+  padding:.2rem .45rem; font-size:.58rem;
+}
+.view-list .card__top{
+  grid-column:2; grid-row:1; padding:0; margin:0; min-width:0;
+}
+.view-list .card__name{
+  font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.view-list .card__sci,
+.view-list .card__fam,
+.view-list .card__facts--summary{ display:none; }
+.view-list .card__expand{
+  grid-column:4; grid-row:1; margin:0;
+}
+.view-list .card__detail{
+  grid-column: 1 / -1; grid-row:2;
+}
+
+/* Expanded: fewer, wider cards, details open by default */
+.drawer.view-expanded{
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+.drawer.view-expanded .card{ max-width: 560px; }
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .colophon{
@@ -554,6 +603,15 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
           </div>
         </div>
 
+        <div class="sidebar__section animal-toggle-wrap">
+          <span class="animal-toggle-wrap__label">View</span>
+          <div class="animal-toggle" role="group" aria-label="Card density">
+            <button class="animal-toggle__btn density-toggle__btn" data-density="list">List</button>
+            <button class="animal-toggle__btn density-toggle__btn is-active" data-density="compact">Compact</button>
+            <button class="animal-toggle__btn density-toggle__btn" data-density="expanded">Expanded</button>
+          </div>
+        </div>
+
         <div class="sidebar__section chip-group">
           <span class="chip-group__label">Status</span>
           <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
@@ -598,7 +656,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 
       <p class="result-count" id="result-count" aria-live="polite"></p>
 
-      <section class="drawer" id="drawer" aria-label="Plant specimens"></section>
+      <section class="drawer view-compact" id="drawer" aria-label="Plant specimens"></section>
 
       <p class="empty-state" id="empty-state" hidden>
         No specimens match that search. Try a different name, or clear filters above.
@@ -4234,6 +4292,7 @@ const PLANT_DATA = [
     plants: [],
     favorites: new Set(),   // plant names the user has starred
     sidebarCollapsed: false,
+    density: "compact", // list | compact | expanded
   };
 
   const FAVORITES_KEY = "favorites";
@@ -4383,13 +4442,24 @@ const PLANT_DATA = [
     render();
   });
 
-  document.querySelectorAll(".animal-toggle__btn").forEach((btn) => {
+  document.querySelectorAll(".animal-toggle__btn:not(.density-toggle__btn)").forEach((btn) => {
     btn.addEventListener("click", () => {
       document
-        .querySelectorAll(".animal-toggle__btn")
+        .querySelectorAll(".animal-toggle__btn:not(.density-toggle__btn)")
         .forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
       state.animal = btn.dataset.animal;
+      render();
+    });
+  });
+
+  document.querySelectorAll(".density-toggle__btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".density-toggle__btn")
+        .forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      state.density = btn.dataset.density;
       render();
     });
   });
@@ -4497,6 +4567,8 @@ const PLANT_DATA = [
       state.tags.size > 0
     );
 
+    drawerEl.className = "drawer view-" + state.density;
+
     drawerEl.innerHTML = "";
     const frag = document.createDocumentFragment();
 
@@ -4551,9 +4623,27 @@ const PLANT_DATA = [
 
       const expandBtn = node.querySelector(".card__expand");
       const detailEl = node.querySelector(".card__detail");
-      expandBtn.addEventListener("click", () => {
+      const cardEl = node.querySelector(".card");
+
+      function toggleDetails() {
         const open = detailEl.classList.toggle("is-open");
         expandBtn.setAttribute("aria-expanded", String(open));
+      }
+
+      if (state.density === "expanded") {
+        detailEl.classList.add("is-open");
+        expandBtn.setAttribute("aria-expanded", "true");
+      }
+
+      expandBtn.addEventListener("click", toggleDetails);
+
+      // Double-tap anywhere on the card body expands/collapses details,
+      // instead of iOS Safari's default double-tap-to-zoom (disabled via
+      // touch-action: manipulation above). Ignore double-taps that land on
+      // the favorite star so starring twice doesn't also toggle details.
+      cardEl.addEventListener("dblclick", (e) => {
+        if (e.target.closest(".card__favorite")) return;
+        toggleDetails();
       });
 
       frag.appendChild(node);
