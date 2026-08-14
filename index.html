@@ -576,7 +576,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
     <p class="eyebrow">Olivia's Field Reference</p>
     <h1>Pet‑Safe&nbsp;Plant Catalog</h1>
     <p class="drawer-front__meta">
-      <span id="specimen-count">137</span> Specimens Catalogued &middot; Toxicity to Cats, Dogs &amp; Horses &middot; Sourced from ASPCA
+      <span id="specimen-count">146</span> Specimens Catalogued &middot; Toxicity to Cats, Dogs &amp; Horses &middot; Sourced from ASPCA
     </p>
   </div>
 </header>
@@ -853,6 +853,31 @@ const PLANT_DATA = [
   "denverNote": "Well-suited to Denver's dry climate. One of the more forgiving succulents to keep locally.",
   "category": [
    "SUCCULENT"
+  ]
+ },
+ {
+  "name": "Alstroemeria (Peruvian Lily)",
+  "sci": "Alstroemeria spp.",
+  "fam": "Alstroemeriaceae",
+  "tj": "Alstroemeria",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three via dedicated page. Worth flagging: Pet Poison Helpline and some veterinary references instead classify it as mildly toxic (tulipalin A, GI upset) — sources genuinely disagree here, though everyone agrees it is NOT a true lily (Lilium) and does not carry the kidney-failure risk true lilies pose to cats.",
+  "climate": "South America (Andes/Chile/Brazil)",
+  "zone": "7-10 (grown as annual/greenhouse elsewhere)",
+  "season": "Year-round import; exceptionally long 2+ week vase life",
+  "light": "Full sun",
+  "water": "Cut stem — pull (don't cut) the stems from the base for longest vase life; change water every 2-3 days",
+  "dried": "No",
+  "wholesale": "$0.75-1.50/stem",
+  "retail": "$3-6/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1298,6 +1323,31 @@ const PLANT_DATA = [
   ],
   "denverNote": "Classically fussy about humidity — Denver's dry air (particularly once winter heating is running) will brown fronds without a humidifier or regular misting.",
   "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Bougainvillea",
+  "sci": "Bougainvillea spp.",
+  "fam": "Nyctaginaceae",
+  "tj": "",
+  "cat": "Unknown — sources conflict on whether ASPCA has a dedicated listing at all",
+  "dog": "Unknown — same conflict",
+  "horse": "Unknown",
+  "principle": "Genuinely disputed: some sources cite ASPCA as confirming non-toxic, others state Bougainvillea has no individual ASPCA dedicated page and default to a cautious 'mildly toxic' label. The one point everyone agrees on is mechanical: the sharp thorns are a real physical-injury risk to mouth, paws, and eyes, separate from any chemical toxicity question.",
+  "climate": "South America",
+  "zone": "9-11 (grown as annual/potted elsewhere)",
+  "season": "Blooms nearly year-round in warm climates",
+  "light": "Full sun",
+  "water": "Let dry between waterings, drought-tolerant once established",
+  "dried": "No",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "UNVERIFIED"
+  ],
+  "category": [
+   "CUT_FLOWER",
    "HOUSEPLANT"
   ]
  },
@@ -2336,6 +2386,35 @@ const PLANT_DATA = [
   ]
  },
  {
+  "name": "Gardenia",
+  "sci": "Gardenia jasminoides",
+  "fam": "Rubiaceae",
+  "tj": "Gardenia",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic (mild)",
+  "principle": "Genioposide, gardenoside — mild vomiting and/or diarrhea, hives. ASPCA-confirmed via dedicated page (toxic to dogs, cats, and horses).",
+  "climate": "China/Japan/Southeast Asia",
+  "zone": "8-11",
+  "season": "Blooms late spring-summer; a bridal/fragrance staple",
+  "light": "Bright indirect to full sun",
+  "water": "Keep evenly moist, avoid cold water directly on foliage",
+  "dried": "No",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-12/stem",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE",
+   "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER",
+   "HOUSEPLANT"
+  ]
+ },
+ {
   "name": "Gerbera Daisy",
   "sci": "Gerbera jamesonii",
   "fam": "Asteraceae",
@@ -2486,6 +2565,35 @@ const PLANT_DATA = [
   ],
   "category": [
    "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Holly",
+  "sci": "Ilex spp.",
+  "fam": "Aquifoliaceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Vomiting, diarrhea and depression — ASPCA notes leaves and berries are low toxicity. This single ASPCA listing covers English Holly, American Holly, Winterberry, and Inkberry together.",
+  "climate": "Europe/Eastern North America (species-dependent)",
+  "zone": "5-9 (species-dependent)",
+  "season": "Peak Nov-Dec (holiday greenery)",
+  "light": "Full sun to part shade (as landscape shrub)",
+  "water": "Cut stem, long vase life, change water weekly",
+  "dried": "Yes",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "denverNote": "Most Holly species are marginal to non-hardy in Denver's zone 5b/6a, reliably grown further east and in the Pacific Northwest instead — sourced here as cut greenery/import rather than field-grown locally.",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
@@ -2888,6 +2996,30 @@ const PLANT_DATA = [
   ]
  },
  {
+  "name": "Majesty Palm",
+  "sci": "Ravenea rivularis",
+  "fam": "Arecaceae",
+  "tj": "Majesty Palm",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three via dedicated page.",
+  "climate": "Madagascar (riverine)",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect to medium",
+  "water": "Keep evenly moist, likes humidity — indoor decline is usually from underwatering, not pet damage",
+  "dried": "No",
+  "wholesale": "$10-20",
+  "retail": "$25-50",
+  "tags": [
+   "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
   "name": "Marjoram",
   "sci": "Origanum majorana",
   "fam": "Lamiaceae",
@@ -2940,6 +3072,33 @@ const PLANT_DATA = [
   ]
  },
  {
+  "name": "Mistletoe (American)",
+  "sci": "Phoradendron flavescens",
+  "fam": "Santalaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Toxalbumin, phoratoxin, viscumin (lectins, phoratoxins) — vomiting, diarrhea, low blood pressure (rare), difficulty breathing, low heart rate. ASPCA-confirmed via dedicated page (toxic to dogs, cats, and horses directly).",
+  "climate": "Eastern/Central US (parasitic on host trees)",
+  "zone": "n/a — parasitic plant, not garden-grown",
+  "season": "Peak Nov-Dec (holiday sprigs)",
+  "light": "n/a — sold as cut sprigs",
+  "water": "Not typically kept in water — hung dry as holiday decor, avoid entirely if pets present",
+  "dried": "Yes (traditionally used dry)",
+  "wholesale": "$3-6/bunch",
+  "retail": "$8-15/bunch",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE",
+   "SEASONAL"
+  ],
+  "category": [
+   "GREENERY"
+  ]
+ },
+ {
   "name": "Money Tree",
   "sci": "Pachira aquatica",
   "fam": "Malvaceae",
@@ -2958,6 +3117,31 @@ const PLANT_DATA = [
   "retail": "$20-35",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Monstera (Swiss Cheese Plant)",
+  "sci": "Monstera deliciosa",
+  "fam": "Araceae",
+  "tj": "Monstera",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates — oral irritation, intense burning of mouth/tongue/lips, excessive drooling, vomiting, difficulty swallowing. ASPCA lists this under 'Swiss Cheese Plant' rather than 'Monstera.'",
+  "climate": "Central America (tropical, climbing/epiphytic)",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium to bright indirect",
+  "water": "Let top 1-2in dry",
+  "dried": "No",
+  "wholesale": "$12-25",
+  "retail": "$30-60",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
   ],
   "category": [
    "HOUSEPLANT"
@@ -3011,6 +3195,31 @@ const PLANT_DATA = [
   "denverNote": "Not garden-hardy in Denver (zone 8-11) — the Mediterranean climate mismatch goes beyond cold hardiness; source as cut greenery only.",
   "category": [
    "GREENERY"
+  ]
+ },
+ {
+  "name": "Orchid (Cattleya/Dendrobium/Cymbidium)",
+  "sci": "Orchidaceae (various genera)",
+  "fam": "Orchidaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Unknown",
+  "principle": "None known — consistent with Phalaenopsis (already ASPCA-confirmed non-toxic) and the broader Orchidaceae family pattern. Multiple independent sources confirm these specific genera as non-toxic, though this entry is verified at family-consensus level rather than each genus having its own individually dedicated ASPCA page the way Phalaenopsis does.",
+  "climate": "Tropical Americas (Cattleya), Asia (Dendrobium), cooler highland climates (Cymbidium)",
+  "zone": "10-12 (houseplant elsewhere)",
+  "season": "Bloom timing varies by genus; Cymbidium peaks winter-spring and is popular for corsage work",
+  "light": "Bright indirect",
+  "water": "Ice cube or soak method weekly, similar to Phalaenopsis",
+  "dried": "No",
+  "wholesale": "$4-10/stem",
+  "retail": "$12-28/stem",
+  "tags": [
+   "SAFE"
+  ],
+  "category": [
+   "CUT_FLOWER",
+   "HOUSEPLANT"
   ]
  },
  {
@@ -3293,6 +3502,33 @@ const PLANT_DATA = [
   ],
   "category": [
    "CUT_FLOWER"
+  ]
+ },
+ {
+  "name": "Pine / Fir / Spruce (Christmas Tree)",
+  "sci": "Pinus / Abies / Picea spp.",
+  "fam": "Pinaceae",
+  "tj": "",
+  "cat": "Unknown — genuinely mixed evidence",
+  "dog": "Unknown — genuinely mixed evidence",
+  "horse": "Unknown",
+  "principle": "Multiple veterinary sources describe needle oils as causing mild oral/GI irritation (drooling, vomiting) and the needles themselves as a mechanical puncture/obstruction risk — but ASPCA doesn't appear to have one clean dedicated toxic/non-toxic page covering generic Christmas pine/fir/spruce, unlike specific named species such as Norfolk Island Pine (which IS separately ASPCA-listed as toxic — a different plant entirely). Treat cautiously regardless: the risk is as much mechanical as chemical, and tree-stand water (preservatives, stagnant bacteria) is a separate hazard worth flagging to clients.",
+  "climate": "Northern Hemisphere temperate/boreal",
+  "zone": "2-8 (species-dependent)",
+  "season": "Peak Nov-Dec (holiday)",
+  "light": "Full sun (as landscape tree)",
+  "water": "Fresh-cut boughs: keep in plain water, avoid preservative packets or aspirin additives if pets have access",
+  "dried": "Yes (wreaths/garland)",
+  "wholesale": "$3-8/bunch (boughs)",
+  "retail": "$10-20/bunch (boughs)",
+  "denverNote": "Colorado is a genuine Christmas tree-growing region — Blue Spruce is the state tree — so locally cut boughs are easy to source in-season here rather than relying on import.",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
