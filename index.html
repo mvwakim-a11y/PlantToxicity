@@ -155,8 +155,11 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   flex-shrink: 0;
   position: sticky;
   top: max(0.75rem, env(safe-area-inset-top));
+  max-height: calc(100vh - max(1.5rem, env(safe-area-inset-top) + env(safe-area-inset-bottom) + 0.75rem));
   z-index: 20;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   transition: width .22s ease, padding .22s ease, opacity .15s ease;
 }
 .sidebar.is-collapsed{
@@ -493,6 +496,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
     top: 0; left: 0;
     width: min(82vw, 300px);
     height: 100%;
+    max-height: none;
     max-width: none;
     border-radius: 0;
     box-shadow: 8px 0 28px rgba(0,0,0,.4);
