@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Reference — Pet-Safe Plant Catalog</title>
+<meta name="description" content="A working field reference of pet toxicity for florists — 124 specimens, sourced and verified.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="drawer-front">
+  <div class="drawer-front__inner">
+    <div class="drawer-front__mark" aria-hidden="true">
+      <svg viewBox="0 0 120 120" class="sprig">
+        <path class="sprig__stem" d="M60 108 C 58 84, 62 60, 60 12" fill="none" stroke-linecap="round"/>
+        <path class="sprig__leaf" d="M60 40 C 44 34, 34 20, 30 6 C 48 8, 60 20, 62 38 Z"/>
+        <path class="sprig__leaf" d="M60 40 C 76 34, 86 20, 90 6 C 72 8, 60 20, 58 38 Z"/>
+        <path class="sprig__leaf" d="M60 68 C 46 63, 37 51, 34 39 C 50 40, 60 51, 61 67 Z"/>
+        <path class="sprig__leaf" d="M60 68 C 74 63, 83 51, 86 39 C 70 40, 60 51, 59 67 Z"/>
+        <circle class="sprig__bud" cx="60" cy="10" r="4.5"/>
+      </svg>
+    </div>
+    <p class="eyebrow">Olivia's Field Reference</p>
+    <h1>Pet‑Safe&nbsp;Plant Catalog</h1>
+    <p class="drawer-front__meta">
+      <span id="specimen-count">124</span> specimens catalogued &middot; toxicity to cats, dogs &amp; horses &middot; sourced from ASPCA verified pages
+    </p>
+  </div>
+</header>
+
+<main>
+
+  <section class="control-panel" aria-label="Search and filter">
+    <div class="control-panel__row">
+      <label class="search-slip">
+        <svg class="search-slip__icon" viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="6" fill="none" stroke-width="1.6"/>
+          <line x1="13" y1="13" x2="18" y2="18" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="search" placeholder="Search common name, scientific name, or family&hellip;" autocomplete="off">
+      </label>
+
+      <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
+        <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
+        <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
+        <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+      </div>
+    </div>
+
+    <div class="control-panel__row control-panel__row--tags">
+      <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
+        <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">Fuck No</button>
+        <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
+        <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
+        <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
+      </div>
+      <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
+        <button class="chip chip--tag" data-tag="SEASONAL">Seasonal</button>
+        <button class="chip chip--tag" data-tag="DRY-FRIENDLY">Dry-friendly</button>
+        <button class="chip chip--tag" data-tag="TJ">At Trader Joe's</button>
+      </div>
+      <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
+    </div>
+  </section>
+
+  <p class="result-count" id="result-count" aria-live="polite"></p>
+
+  <section class="drawer" id="drawer" aria-label="Plant specimens"></section>
+
+  <p class="empty-state" id="empty-state" hidden>
+    No specimens match that search. Try a different name, or clear filters above.
+  </p>
+
+</main>
+
+<footer class="colophon">
+  <p>
+    Toxicity data compiled from ASPCA Animal Poison Control Center pages, verified individually per entry.
+    Not a substitute for veterinary guidance. Suspected ingestion &mdash; call ASPCA Poison Control
+    <a href="tel:8884264435">(888) 426‑4435</a> or Pet Poison Helpline <a href="tel:8557647661">(855) 764‑7661</a>.
+  </p>
+  <p class="colophon__small">Built for Olivia's floral work · maintained in <code>data.json</code> · last updated with the catalog</p>
+</footer>
+
+<template id="card-template">
+  <article class="card">
+    <div class="card__stamp" aria-hidden="true"></div>
+    <div class="card__top">
+      <h2 class="card__name"></h2>
+      <p class="card__sci"></p>
+      <p class="card__fam"></p>
+    </div>
+    <dl class="card__facts card__facts--summary">
+      <div><dt>Season</dt><dd class="f-season"></dd></div>
+      <div><dt>Light</dt><dd class="f-light"></dd></div>
+    </dl>
+    <button class="card__expand" aria-expanded="false">Details<span class="chevron" aria-hidden="true">&#8595;</span></button>
+    <div class="card__detail">
+      <dl class="card__facts">
+        <div><dt>Toxic principle / symptoms</dt><dd class="f-principle"></dd></div>
+        <div><dt>Native climate</dt><dd class="f-climate"></dd></div>
+        <div><dt>Hardiness zone</dt><dd class="f-zone"></dd></div>
+        <div><dt>Water</dt><dd class="f-water"></dd></div>
+        <div><dt>Dried-suitable</dt><dd class="f-dried"></dd></div>
+        <div><dt>Est. wholesale</dt><dd class="f-wholesale"></dd></div>
+        <div><dt>Est. retail</dt><dd class="f-retail"></dd></div>
+        <div class="f-tj-row"><dt>Trader Joe's as</dt><dd class="f-tj"></dd></div>
+      </dl>
+      <div class="card__animals">
+        <div><span class="chip-mini chip-mini--cat">Cat</span><span class="f-cat-status"></span></div>
+        <div><span class="chip-mini chip-mini--dog">Dog</span><span class="f-dog-status"></span></div>
+        <div><span class="chip-mini chip-mini--horse">Horse</span><span class="f-horse-status"></span></div>
+      </div>
+    </div>
+  </article>
+</template>
+
+<script src="js/app.js"></script>
+</body>
+</html>
