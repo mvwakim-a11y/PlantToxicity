@@ -1,0 +1,3425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Reference — Pet-Safe Plant Catalog</title>
+<meta name="description" content="A working field reference of pet toxicity for florists — 124 specimens, sourced and verified.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --forest:        #1F2E24;
+  --forest-deep:    #172119;
+  --parchment:      #F1EAD9;
+  --parchment-dim:  #E7DEC8;
+  --ink:            #1A2419;
+  --ink-soft:       #4B5A4C;
+  --moss:           #5C7A5C;
+  --gold:           #C9A227;
+
+  --safe:           #4C6B44;
+  --safe-ink:       #3B5334;
+  --toxic:          #A6721E;
+  --toxic-ink:      #825A17;
+  --fatal:          #7E1F14;
+  --fatal-ink:      #5E170F;
+  --unverified:     #6B655A;
+  --unverified-ink: #56514A;
+
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --caps:    'Cormorant SC', 'Cormorant Garamond', Georgia, serif;
+  --mono:    'Space Mono', 'Courier New', monospace;
+  --sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius: 3px;
+  --max-w: 1180px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin:0;
+  background: var(--forest);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.5;
+}
+
+:focus-visible{
+  outline: 2.5px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   HERO / DRAWER FRONT
+   ============================================================ */
+.drawer-front{
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(201,162,39,0.10), transparent 55%),
+    linear-gradient(180deg, var(--forest) 0%, var(--forest-deep) 100%);
+  padding: 4.5rem 1.5rem 3rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(201,162,39,0.35);
+  position: relative;
+}
+.drawer-front::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px; height:6px;
+  background: repeating-linear-gradient(90deg, rgba(201,162,39,0.55) 0 14px, transparent 14px 28px);
+  opacity:.5;
+}
+.drawer-front__inner{ max-width: 640px; margin: 0 auto; }
+.sprig{ width: 54px; height: 54px; margin-bottom: .75rem; opacity: .9; }
+.sprig__stem{ stroke: var(--gold); stroke-width: 2.2; }
+.sprig__leaf{ fill: var(--moss); }
+.sprig__bud{ fill: var(--gold); }
+
+.eyebrow{
+  font-family: var(--mono);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  font-size: .68rem;
+  margin: 0 0 .6rem;
+}
+.drawer-front h1{
+  font-family: var(--display);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--parchment);
+  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  margin: 0 0 .9rem;
+  letter-spacing: .01em;
+}
+.drawer-front__meta{
+  font-family: var(--sans);
+  color: #C7D0C4;
+  font-size: .86rem;
+  margin: 0;
+}
+.drawer-front__meta #specimen-count{
+  font-family: var(--mono);
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* ============================================================
+   CONTROL PANEL
+   ============================================================ */
+main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
+
+.control-panel{
+  background: var(--parchment);
+  margin-top: -1.75rem;
+  border-radius: var(--radius);
+  box-shadow: 0 18px 40px -18px rgba(0,0,0,.55);
+  padding: 1.1rem 1.25rem 1rem;
+  position: sticky;
+  top: 0.75rem;
+  z-index: 20;
+}
+.control-panel__row{
+  display:flex; gap: .75rem; align-items:center; flex-wrap: wrap;
+}
+.control-panel__row + .control-panel__row{ margin-top: .75rem; }
+.control-panel__row--tags{ justify-content: space-between; }
+
+.search-slip{
+  flex: 1 1 260px;
+  display:flex; align-items:center; gap:.55rem;
+  background: #fff;
+  border: 1.5px solid var(--parchment-dim);
+  border-radius: var(--radius);
+  padding: .55rem .75rem;
+}
+.search-slip:focus-within{ border-color: var(--moss); }
+.search-slip__icon{ width:16px; height:16px; stroke: var(--ink-soft); flex-shrink:0; }
+.search-slip input{
+  border:0; outline:0; width:100%;
+  font-family: var(--sans); font-size: .92rem; color: var(--ink);
+  background: transparent;
+}
+.search-slip input::placeholder{ color: #9a9184; }
+
+.animal-toggle{ display:flex; border: 1.5px solid var(--ink); border-radius: var(--radius); overflow:hidden; }
+.animal-toggle__btn{
+  font-family: var(--mono); font-size: .74rem; letter-spacing:.05em; text-transform:uppercase;
+  border:0; background: transparent; color: var(--ink);
+  padding: .55rem .85rem; cursor:pointer;
+  border-left: 1.5px solid var(--ink);
+}
+.animal-toggle__btn:first-child{ border-left:0; }
+.animal-toggle__btn.is-active{ background: var(--ink); color: var(--parchment); }
+.animal-toggle__btn:hover:not(.is-active){ background: rgba(26,36,25,.08); }
+
+.tab-chips{ display:flex; gap:.45rem; flex-wrap: wrap; }
+.chip{
+  font-family: var(--mono); font-size: .72rem; letter-spacing:.04em; text-transform: uppercase;
+  padding: .4rem .7rem; border-radius: 999px; cursor:pointer;
+  background: transparent; border: 1.4px solid currentColor;
+  transition: background .12s ease, color .12s ease;
+}
+.chip--fatal{ color: var(--fatal-ink); }
+.chip--toxic{ color: var(--toxic-ink); }
+.chip--safe{ color: var(--safe-ink); }
+.chip--unverified{ color: var(--unverified-ink); }
+.chip[aria-pressed="true"]{ background: currentColor; }
+.chip--fatal[aria-pressed="true"]{ color:#fff; }
+.chip--toxic[aria-pressed="true"]{ color:#fff; }
+.chip--safe[aria-pressed="true"]{ color:#fff; }
+.chip--unverified[aria-pressed="true"]{ color:#fff; }
+
+.chip--tag{ color: var(--ink-soft); }
+.chip--tag[aria-pressed="true"]{ background: var(--ink-soft); color:#fff; }
+
+.clear-btn{
+  font-family: var(--sans); font-size: .78rem; color: var(--ink-soft);
+  background:none; border:0; text-decoration: underline; cursor:pointer;
+  padding: .3rem 0;
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+.result-count{
+  font-family: var(--mono); font-size: .74rem; letter-spacing:.05em; text-transform: uppercase;
+  color: #C7D0C4; margin: 1.1rem .15rem .6rem;
+}
+
+.drawer{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1rem;
+  padding-bottom: 3rem;
+}
+
+.empty-state{
+  color: var(--parchment); text-align:center; font-family: var(--sans);
+  padding: 3rem 1rem; opacity:.75;
+}
+
+/* ============================================================
+   SPECIMEN CARD
+   ============================================================ */
+.card{
+  position: relative;
+  background: var(--parchment);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.15rem 1rem;
+  box-shadow: 0 10px 24px -14px rgba(0,0,0,.5);
+  border: 1px solid rgba(0,0,0,.06);
+  display:flex; flex-direction: column;
+}
+
+.card__stamp{
+  position:absolute; top: .7rem; right: .7rem;
+  font-family: var(--mono); font-weight: 700; font-size: .64rem;
+  letter-spacing: .09em; text-transform:uppercase;
+  padding: .3rem .5rem;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(4deg);
+  mix-blend-mode: multiply;
+  opacity: .92;
+  pointer-events:none;
+  clip-path: polygon(2% 8%, 97% 0%, 100% 88%, 4% 100%);
+}
+.card__stamp[data-status="FATAL"]{ color: var(--fatal); border-color: var(--fatal); }
+.card__stamp[data-status="TOXIC"]{ color: var(--toxic); border-color: var(--toxic); }
+.card__stamp[data-status="SAFE"]{ color: var(--safe); border-color: var(--safe); }
+.card__stamp[data-status="UNVERIFIED"]{ color: var(--unverified); border-color: var(--unverified); border-style: dashed; }
+
+.card__top{ padding-right: 5.2rem; margin-bottom: .5rem; }
+.card__name{
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 1.28rem; color: var(--ink); margin: 0 0 .15rem; line-height:1.15;
+}
+.card__sci{
+  font-family: var(--mono); font-size: .74rem; color: var(--moss);
+  margin: 0; font-style: italic;
+}
+.card__fam{
+  font-family: var(--sans); font-size: .72rem; color: var(--ink-soft);
+  margin: .15rem 0 0; text-transform: uppercase; letter-spacing:.03em;
+}
+
+.card__facts--summary{
+  display:flex; gap: 1.1rem; margin: .3rem 0 .7rem; padding-top: .6rem;
+  border-top: 1px dashed var(--parchment-dim);
+}
+.card__facts--summary dt{
+  font-family: var(--mono); font-size: .6rem; text-transform:uppercase; letter-spacing:.06em;
+  color: var(--ink-soft); margin:0;
+}
+.card__facts--summary dd{
+  font-family: var(--sans); font-size: .82rem; margin: .1rem 0 0; color: var(--ink);
+}
+
+.card__expand{
+  margin-top: auto;
+  align-self:flex-start;
+  font-family: var(--mono); font-size: .68rem; letter-spacing:.05em; text-transform:uppercase;
+  color: var(--ink-soft); background:none; border:0; cursor:pointer;
+  display:flex; align-items:center; gap:.35rem; padding: .2rem 0;
+}
+.card__expand .chevron{ transition: transform .18s ease; font-size: .7rem; }
+.card__expand[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
+
+.card__detail{
+  display:none;
+  margin-top: .7rem; padding-top: .7rem;
+  border-top: 1px dashed var(--parchment-dim);
+}
+.card__detail.is-open{ display:block; }
+
+.card__detail .card__facts{ display:flex; flex-direction:column; gap:.55rem; }
+.card__detail dt{
+  font-family: var(--mono); font-size: .6rem; text-transform:uppercase; letter-spacing:.06em;
+  color: var(--ink-soft); margin:0;
+}
+.card__detail dd{ font-family: var(--sans); font-size: .82rem; margin:.12rem 0 0; color: var(--ink); }
+.f-tj-row{ display:none; }
+.f-tj-row.is-shown{ display:block; }
+
+.card__animals{
+  display:flex; gap: 1rem; margin-top: .8rem; padding-top: .7rem;
+  border-top: 1px dashed var(--parchment-dim);
+  font-family: var(--sans); font-size: .78rem;
+}
+.card__animals > div{ display:flex; align-items:center; gap:.4rem; }
+.chip-mini{
+  font-family: var(--mono); font-size: .6rem; text-transform:uppercase; letter-spacing:.04em;
+  padding: .12rem .4rem; border-radius: 3px; color: var(--ink-soft); border:1px solid var(--parchment-dim);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.colophon{
+  max-width: var(--max-w); margin: 0 auto; padding: 2rem 1.25rem 3rem;
+  color: #A8B2A4; font-family: var(--sans); font-size: .8rem; line-height:1.6;
+}
+.colophon a{ color: var(--gold); }
+.colophon__small{ font-family: var(--mono); font-size: .68rem; margin-top:.6rem; opacity:.7; }
+.colophon code{ font-family: var(--mono); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 640px){
+  .drawer-front{ padding: 3.2rem 1.25rem 2.4rem; }
+  .control-panel{ position: static; }
+  .control-panel__row--tags{ flex-direction: column; align-items:flex-start; }
+  .drawer{ grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<header class="drawer-front">
+  <div class="drawer-front__inner">
+    <div class="drawer-front__mark" aria-hidden="true">
+      <svg viewBox="0 0 120 120" class="sprig">
+        <path class="sprig__stem" d="M60 108 C 58 84, 62 60, 60 12" fill="none" stroke-linecap="round"/>
+        <path class="sprig__leaf" d="M60 40 C 44 34, 34 20, 30 6 C 48 8, 60 20, 62 38 Z"/>
+        <path class="sprig__leaf" d="M60 40 C 76 34, 86 20, 90 6 C 72 8, 60 20, 58 38 Z"/>
+        <path class="sprig__leaf" d="M60 68 C 46 63, 37 51, 34 39 C 50 40, 60 51, 61 67 Z"/>
+        <path class="sprig__leaf" d="M60 68 C 74 63, 83 51, 86 39 C 70 40, 60 51, 59 67 Z"/>
+        <circle class="sprig__bud" cx="60" cy="10" r="4.5"/>
+      </svg>
+    </div>
+    <p class="eyebrow">Olivia's Field Reference</p>
+    <h1>Pet‑Safe&nbsp;Plant Catalog</h1>
+    <p class="drawer-front__meta">
+      <span id="specimen-count">124</span> specimens catalogued &middot; toxicity to cats, dogs &amp; horses &middot; sourced from ASPCA verified pages
+    </p>
+  </div>
+</header>
+
+<main>
+
+  <section class="control-panel" aria-label="Search and filter">
+    <div class="control-panel__row">
+      <label class="search-slip">
+        <svg class="search-slip__icon" viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="6" fill="none" stroke-width="1.6"/>
+          <line x1="13" y1="13" x2="18" y2="18" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="search" placeholder="Search common name, scientific name, or family&hellip;" autocomplete="off">
+      </label>
+
+      <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
+        <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
+        <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
+        <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+      </div>
+    </div>
+
+    <div class="control-panel__row control-panel__row--tags">
+      <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
+        <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">Fuck No</button>
+        <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
+        <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
+        <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
+      </div>
+      <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
+        <button class="chip chip--tag" data-tag="SEASONAL">Seasonal</button>
+        <button class="chip chip--tag" data-tag="DRY-FRIENDLY">Dry-friendly</button>
+        <button class="chip chip--tag" data-tag="TJ">At Trader Joe's</button>
+      </div>
+      <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
+    </div>
+  </section>
+
+  <p class="result-count" id="result-count" aria-live="polite"></p>
+
+  <section class="drawer" id="drawer" aria-label="Plant specimens"></section>
+
+  <p class="empty-state" id="empty-state" hidden>
+    No specimens match that search. Try a different name, or clear filters above.
+  </p>
+
+</main>
+
+<footer class="colophon">
+  <p>
+    Toxicity data compiled from ASPCA Animal Poison Control Center pages, verified individually per entry.
+    Not a substitute for veterinary guidance. Suspected ingestion &mdash; call ASPCA Poison Control
+    <a href="tel:8884264435">(888) 426‑4435</a> or Pet Poison Helpline <a href="tel:8557647661">(855) 764‑7661</a>.
+  </p>
+  <p class="colophon__small">Built for Olivia's floral work · maintained in <code>data.json</code> · last updated with the catalog</p>
+</footer>
+
+<template id="card-template">
+  <article class="card">
+    <div class="card__stamp" aria-hidden="true"></div>
+    <div class="card__top">
+      <h2 class="card__name"></h2>
+      <p class="card__sci"></p>
+      <p class="card__fam"></p>
+    </div>
+    <dl class="card__facts card__facts--summary">
+      <div><dt>Season</dt><dd class="f-season"></dd></div>
+      <div><dt>Light</dt><dd class="f-light"></dd></div>
+    </dl>
+    <button class="card__expand" aria-expanded="false">Details<span class="chevron" aria-hidden="true">&#8595;</span></button>
+    <div class="card__detail">
+      <dl class="card__facts">
+        <div><dt>Toxic principle / symptoms</dt><dd class="f-principle"></dd></div>
+        <div><dt>Native climate</dt><dd class="f-climate"></dd></div>
+        <div><dt>Hardiness zone</dt><dd class="f-zone"></dd></div>
+        <div><dt>Water</dt><dd class="f-water"></dd></div>
+        <div><dt>Dried-suitable</dt><dd class="f-dried"></dd></div>
+        <div><dt>Est. wholesale</dt><dd class="f-wholesale"></dd></div>
+        <div><dt>Est. retail</dt><dd class="f-retail"></dd></div>
+        <div class="f-tj-row"><dt>Trader Joe's as</dt><dd class="f-tj"></dd></div>
+      </dl>
+      <div class="card__animals">
+        <div><span class="chip-mini chip-mini--cat">Cat</span><span class="f-cat-status"></span></div>
+        <div><span class="chip-mini chip-mini--dog">Dog</span><span class="f-dog-status"></span></div>
+        <div><span class="chip-mini chip-mini--horse">Horse</span><span class="f-horse-status"></span></div>
+      </div>
+    </div>
+  </article>
+</template>
+
+<script>
+const PLANT_DATA = [
+ {
+  "name": "'Janet Craig' Dracaena",
+  "sci": "Dracaena fragrans 'Janet Craig'",
+  "fam": "Asparagaceae",
+  "tj": "Janet Craig",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 vomiting, depression",
+  "climate": "Cultivar, West/Central Africa origin",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let top 2in dry",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$20-35",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "African Violet",
+  "sci": "Saintpaulia (Streptocarpus sect.)",
+  "fam": "Gesneriaceae",
+  "tj": "African Violet",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Tanzania, Kenya highlands",
+  "zone": "11-12 (houseplant)",
+  "season": "Blooms nearly year-round",
+  "light": "Bright indirect, no direct sun",
+  "water": "Bottom-water, avoid wetting leaves",
+  "dried": "No",
+  "wholesale": "$3-5",
+  "retail": "$7-10",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Air Plant",
+  "sci": "Tillandsia spp.",
+  "fam": "Bromeliaceae",
+  "tj": "Air Plant",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Central/South America, southern US (epiphyte)",
+  "zone": "9-11",
+  "season": "Year-round",
+  "light": "Bright indirect",
+  "water": "Mist or soak weekly, dry fully after",
+  "dried": "Yes (natural dry look)",
+  "wholesale": "$2-5",
+  "retail": "$5-12",
+  "tags": [
+   "SAFE",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Alocasia 'Regal Shield'/'Frydek'",
+  "sci": "Alocasia spp.",
+  "fam": "Araceae",
+  "tj": "Alocasia",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates \u2014 oral swelling, drooling, difficulty swallowing",
+  "climate": "Southeast Asia rainforest",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium to bright indirect, high humidity",
+  "water": "Keep evenly moist",
+  "dried": "No",
+  "wholesale": "$10-20",
+  "retail": "$25-45",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Aloe Vera",
+  "sci": "Aloe barbadensis miller",
+  "fam": "Asphodelaceae",
+  "tj": "Aloe Vera",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic",
+  "principle": "Saponins \u2014 vomiting, diarrhea, lethargy",
+  "climate": "Arabian Peninsula (arid)",
+  "zone": "9-11",
+  "season": "Year-round",
+  "light": "Bright direct/indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-18",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Amaranthus / Love-Lies-Bleeding",
+  "sci": "Amaranthus caudatus",
+  "fam": "Amaranthaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Not confirmed either direction \u2014 popular trailing element in bouquets and installations",
+  "climate": "South America (Andes)",
+  "zone": "2-11 (annual)",
+  "season": "Peak summer-fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (dries well, holds color)",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Amaryllis",
+  "sci": "Hippeastrum spp.",
+  "fam": "Amaryllidaceae",
+  "tj": "Amaryllis (bulb kit)",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Lycorine, concentrated in bulb \u2014 vomiting, drooling, lethargy, tremors",
+  "climate": "South America",
+  "zone": "8-10 (bulb, forced elsewhere)",
+  "season": "Blooms Dec-Feb (forced for holidays)",
+  "light": "Bright indirect to direct",
+  "water": "Water when soil dry, avoid wetting bulb",
+  "dried": "No",
+  "wholesale": "$3-6/bulb",
+  "retail": "$15-25/kit",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Anemone",
+  "sci": "Anemone coronaria",
+  "fam": "Ranunculaceae",
+  "tj": "Anemone",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Protoanemonin (fresh sap) \u2014 oral irritation, blistering, drooling; dried/dead plant lower risk",
+  "climate": "Mediterranean",
+  "zone": "7-10 (corm)",
+  "season": "Peak winter-spring",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Anthurium",
+  "sci": "Anthurium andraeanum",
+  "fam": "Araceae",
+  "tj": "Anthurium",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 oral irritation, drooling",
+  "climate": "Colombia/Ecuador rainforest",
+  "zone": "11-12",
+  "season": "Blooms year-round",
+  "light": "Bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$16-28",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Areca Palm",
+  "sci": "Dypsis lutescens",
+  "fam": "Arecaceae",
+  "tj": "Areca Palm",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Madagascar",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Evenly moist, good drainage",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$20-35",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Asparagus Fern",
+  "sci": "Asparagus setaceus",
+  "fam": "Asparagaceae",
+  "tj": "Asparagus Fern",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Sapogenin \u2014 GI upset; berries cause dermatitis",
+  "climate": "South Africa",
+  "zone": "9-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Keep evenly moist",
+  "dried": "Yes (filler greenery)",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Astilbe",
+  "sci": "Astilbe spp.",
+  "fam": "Saxifragaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found",
+  "climate": "East Asia/North America",
+  "zone": "3-8",
+  "season": "Peak summer",
+  "light": "Part shade",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "Yes",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Autumn Crocus",
+  "sci": "Colchicum autumnale",
+  "fam": "Colchicaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "Toxic (severe)",
+  "horse": "Toxic (severe)",
+  "principle": "Colchicine, concentrated in bulb \u2014 multi-organ failure, bone marrow suppression, death",
+  "climate": "Europe/North Africa",
+  "zone": "4-9 (bulb)",
+  "season": "Blooms fall, foliage spring",
+  "light": "Full sun to part shade",
+  "water": "Bulb/garden plant, rarely cut",
+  "dried": "No",
+  "wholesale": "n/a \u2014 rarely sold as cut flower",
+  "retail": "n/a",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Azalea / Rhododendron",
+  "sci": "Rhododendron spp.",
+  "fam": "Ericaceae",
+  "tj": "Azalea (potted)",
+  "cat": "FATAL",
+  "dog": "Toxic (severe)",
+  "horse": "Toxic (severe)",
+  "principle": "Grayanotoxins, ALL parts \u2014 vomiting, cardiac arrhythmia, seizures, coma in large ingestions",
+  "climate": "East Asia/Eastern North America",
+  "zone": "5-9 (garden), forced as gift plant",
+  "season": "Peak bloom spring; forced Jan-Apr as gift plant",
+  "light": "Part shade",
+  "water": "Potted plant \u2014 keep soil consistently moist, acidic soil",
+  "dried": "No",
+  "wholesale": "$8-15 (potted)",
+  "retail": "$20-35 (potted)",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Baby's Breath",
+  "sci": "Gypsophila paniculata",
+  "fam": "Caryophyllaceae",
+  "tj": "Baby's Breath",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 mild GI upset",
+  "climate": "Central/Eastern Europe",
+  "zone": "3-9",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 3-4 days",
+  "dried": "Yes (classic dried filler)",
+  "wholesale": "$0.20-0.40/stem",
+  "retail": "$3-6/bunch",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Bells of Ireland",
+  "sci": "Moluccella laevis",
+  "fam": "Lamiaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Unknown",
+  "principle": "None known \u2014 confirmed on Cats Protection (UK) safe-plant list",
+  "climate": "Western Asia/Turkey/Syria",
+  "zone": "9-11 (annual elsewhere)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (holds green color well)",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Birch (branch)",
+  "sci": "Betula spp.",
+  "fam": "Betulaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found",
+  "climate": "Northern Hemisphere temperate",
+  "zone": "2-7",
+  "season": "Year-round (bare branch/log decor)",
+  "light": "Full sun",
+  "water": "Not typically kept in water \u2014 used as structural/decor element",
+  "dried": "Yes (used bare/dried by design)",
+  "wholesale": "$5-15/branch",
+  "retail": "$15-40/branch",
+  "tags": [
+   "UNVERIFIED",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Bird of Paradise",
+  "sci": "Strelitzia reginae",
+  "fam": "Strelitziaceae",
+  "tj": "Bird of Paradise",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Tannins/hydrocyanic compounds \u2014 mild GI upset, drowsiness",
+  "climate": "South Africa",
+  "zone": "9-11",
+  "season": "Blooms spring-summer",
+  "light": "Bright direct/indirect",
+  "water": "Keep evenly moist, good drainage",
+  "dried": "Yes (dried bloom)",
+  "wholesale": "$8-15",
+  "retail": "$20-35",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Bird's Nest Fern",
+  "sci": "Asplenium nidus",
+  "fam": "Aspleniaceae",
+  "tj": "Bird's Nest Fern",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Tropical Asia/Australia/Africa (epiphyte)",
+  "zone": "11-12",
+  "season": "Year-round foliage",
+  "light": "Medium indirect",
+  "water": "Keep evenly moist, high humidity",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$14-22",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Blazing Star (Liatris)",
+  "sci": "Liatris spicata",
+  "fam": "Asteraceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Unknown",
+  "principle": "None known \u2014 ASPCA lists it among confirmed non-toxic Mother's Day bouquet flowers",
+  "climate": "Eastern North America",
+  "zone": "3-9 (corm)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (holds color well)",
+  "wholesale": "$0.75-1.50/stem",
+  "retail": "$3-6/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Boston Fern",
+  "sci": "Nephrolepis exaltata",
+  "fam": "Nephrolepidaceae",
+  "tj": "Boston Fern",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Tropical Americas, Africa, Polynesia",
+  "zone": "9-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect, high humidity",
+  "water": "Keep evenly moist, never soggy",
+  "dried": "No",
+  "wholesale": "$4-8",
+  "retail": "$10-15",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Boxwood",
+  "sci": "Buxus sempervirens",
+  "fam": "Buxaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Steroidal alkaloids \u2014 vomiting, diarrhea, colic; large ingestion can affect heart/respiration",
+  "climate": "Southern Europe/Western Asia/North Africa",
+  "zone": "5-9",
+  "season": "Year-round (cut greenery)",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water weekly",
+  "dried": "Yes",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Calathea (assorted)",
+  "sci": "Calathea/Goeppertia spp.",
+  "fam": "Marantaceae",
+  "tj": "Calathea",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Tropical Central/South America",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium to bright indirect, no direct sun",
+  "water": "Keep consistently moist, filtered water",
+  "dried": "No",
+  "wholesale": "$5-10",
+  "retail": "$12-20",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Calla Lily",
+  "sci": "Zantedeschia aethiopica",
+  "fam": "Araceae",
+  "tj": "Calla Lily",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 NOT a true lily; oral irritation, drooling (not kidney-related)",
+  "climate": "Southern Africa",
+  "zone": "8-10",
+  "season": "Peak spring-summer (cut); year-round import",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Camellia",
+  "sci": "Camellia japonica",
+  "fam": "Theaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "climate": "East Asia",
+  "zone": "7-9",
+  "season": "Peak winter-early spring",
+  "light": "Part shade",
+  "water": "Cut stem, condition in cool water",
+  "dried": "No",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Carnation",
+  "sci": "Dianthus caryophyllus",
+  "fam": "Caryophyllaceae",
+  "tj": "Carnations (bunch)",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Unknown compound \u2014 mild GI upset, dermatitis",
+  "climate": "Mediterranean",
+  "zone": "5-9",
+  "season": "Year-round (greenhouse)",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes",
+  "wholesale": "$0.30-0.60/stem",
+  "retail": "$2-3/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Cast Iron Plant / Aspidistra",
+  "sci": "Aspidistra elatior",
+  "fam": "Asparagaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Not confirmed either direction \u2014 widely used for leaf-wrap and foliage design in weddings",
+  "climate": "Japan/Taiwan (understory)",
+  "zone": "7-11",
+  "season": "Year-round foliage",
+  "light": "Low to medium indirect",
+  "water": "Cut leaf, or potted: let dry between waterings",
+  "dried": "No",
+  "wholesale": "$2-4/leaf",
+  "retail": "$6-10/leaf",
+  "tags": [
+   "UNVERIFIED"
+  ]
+ },
+ {
+  "name": "Castor Bean",
+  "sci": "Ricinus communis",
+  "fam": "Euphorbiaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "FATAL",
+  "horse": "FATAL",
+  "principle": "Ricin, concentrated in seeds \u2014 GI hemorrhage, organ failure, death (small doses lethal)",
+  "climate": "East Africa",
+  "zone": "9-11 (grown as annual further north)",
+  "season": "Foliage/seed pods summer-fall",
+  "light": "Full sun",
+  "water": "Ornamental foliage plant, not typically cut",
+  "dried": "No",
+  "wholesale": "n/a \u2014 not typically sold as cut flower",
+  "retail": "n/a",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO"
+  ]
+ },
+ {
+  "name": "Celosia (Cockscomb)",
+  "sci": "Celosia argentea",
+  "fam": "Amaranthaceae",
+  "tj": "Celosia",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic across all cultivar pages (globosa, plumosa, spicata, cristata) verified directly",
+  "climate": "Tropical Asia/Africa (naturalized)",
+  "zone": "10-11 (annual elsewhere)",
+  "season": "Peak summer-fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (holds color well)",
+  "wholesale": "$0.60-1.20/stem",
+  "retail": "$3-6/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Chinese Evergreen",
+  "sci": "Aglaonema spp.",
+  "fam": "Araceae",
+  "tj": "Chinese Evergreen",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 mild oral irritation",
+  "climate": "Tropical/subtropical Asia",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Low to medium indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$14-24",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Chinese Money Plant",
+  "sci": "Pilea peperomioides",
+  "fam": "Urticaceae",
+  "tj": "Pilea",
+  "cat": "Unknown \u2014 a newer trade plant not confirmed on ASPCA's list",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Widely reputed pet-safe in the houseplant community, but no authoritative confirmation found",
+  "climate": "Yunnan Province, China",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$4-8",
+  "retail": "$10-16",
+  "tags": [
+   "UNVERIFIED"
+  ]
+ },
+ {
+  "name": "Christmas Cactus",
+  "sci": "Schlumbergera bridgesii",
+  "fam": "Cactaceae",
+  "tj": "Christmas Cactus",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Brazilian rainforest (epiphyte)",
+  "zone": "10-12",
+  "season": "Blooms Nov-Jan",
+  "light": "Bright indirect",
+  "water": "Let top inch dry, more humidity than typical cacti",
+  "dried": "No",
+  "wholesale": "$5-8",
+  "retail": "$12-18",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Chrysanthemum (Mum)",
+  "sci": "Chrysanthemum spp.",
+  "fam": "Asteraceae",
+  "tj": "Mums",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Pyrethrins/sesquiterpene lactones \u2014 GI upset, drooling, skin irritation",
+  "climate": "East Asia",
+  "zone": "5-9",
+  "season": "Peak fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "Yes",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Cosmos",
+  "sci": "Cosmos bipinnatus",
+  "fam": "Asteraceae",
+  "tj": "",
+  "cat": "Unknown \u2014 no dedicated ASPCA page found to confirm either way; an aggregator site claimed non-toxic but that could not be verified directly",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Not confirmed from a primary source",
+  "climate": "Mexico",
+  "zone": "2-11 (annual)",
+  "season": "Peak summer-fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Croton",
+  "sci": "Codiaeum variegatum",
+  "fam": "Euphorbiaceae",
+  "tj": "Croton",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Diterpenes in sap \u2014 vomiting, diarrhea, skin irritation",
+  "climate": "Southeast Asia/Pacific Islands",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Bright direct/indirect",
+  "water": "Keep evenly moist",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$16-25",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Curly Willow / Pussy Willow",
+  "sci": "Salix spp.",
+  "fam": "Salicaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Northern Hemisphere temperate",
+  "zone": "4-9",
+  "season": "Pussy willow catkins late winter; curly willow branches year-round",
+  "light": "Full sun",
+  "water": "Cut stem, can root in water",
+  "dried": "Yes (dries in place, no wilting)",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Cyclamen",
+  "sci": "Cyclamen persicum",
+  "fam": "Primulaceae",
+  "tj": "Cyclamen",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Terpenoid saponins, concentrated in tuber/roots \u2014 vomiting, diarrhea; large tuber ingestion can be severe",
+  "climate": "Mediterranean/Middle East",
+  "zone": "9-11 (grown as annual/gift plant elsewhere)",
+  "season": "Blooms fall-spring (cool season)",
+  "light": "Bright indirect, cool room",
+  "water": "Water from base, keep tuber dry on top",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$12-20",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Daffodil",
+  "sci": "Narcissus spp.",
+  "fam": "Amaryllidaceae",
+  "tj": "Daffodils (bunch)",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Lycorine, concentrated in bulb \u2014 vomiting, diarrhea, possible cardiac/GI collapse in large amounts",
+  "climate": "Western Europe/Mediterranean",
+  "zone": "3-8 (bulb)",
+  "season": "Peak Mar-Apr",
+  "light": "Full sun",
+  "water": "Cut stem, condition separately from other flowers (sap is irritating to them)",
+  "dried": "No",
+  "wholesale": "$0.30-0.60/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Dahlia",
+  "sci": "Dahlia spp.",
+  "fam": "Compositae",
+  "tj": "Dahlia",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic (mild)",
+  "principle": "Unknown toxic principle (ASPCA-confirmed toxic) \u2014 mild gastrointestinal signs, mild dermatitis",
+  "climate": "Mexico/Central America",
+  "zone": "8-11 (tuber, grown as annual further north)",
+  "season": "Peak Jul-Oct",
+  "light": "Full sun",
+  "water": "Cut stem, sear/hot-water treat cut end for vase life",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Daylily",
+  "sci": "Hemerocallis spp.",
+  "fam": "Asphodelaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "Non-toxic",
+  "horse": "Unknown",
+  "principle": "Unknown nephrotoxin, ALL parts \u2014 acute kidney failure in cats within 24-72hrs",
+  "climate": "East Asia",
+  "zone": "3-9",
+  "season": "Peak Jun-Aug",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "dried": "No",
+  "wholesale": "$0.60-1.20/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Dogwood (branch)",
+  "sci": "Cornus spp.",
+  "fam": "Cornaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found; widely assumed safe in gardening sources but not verified here",
+  "climate": "Eastern North America",
+  "zone": "5-9",
+  "season": "Blooms spring; branches available year-round",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, score woody ends for water uptake",
+  "dried": "Yes (bare branches)",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Dracaena (Draco/Marginata/Reflexa)",
+  "sci": "Dracaena spp.",
+  "fam": "Asparagaceae",
+  "tj": "Dracaena",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 vomiting (sometimes bloody), depression, dilated pupils (cats)",
+  "climate": "Africa/Madagascar/Asia (varies by species)",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let top 2in dry",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$20-40",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Dumb Cane",
+  "sci": "Dieffenbachia seguine",
+  "fam": "Araceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates \u2014 intense oral pain/swelling, drooling, vomiting",
+  "climate": "Caribbean/South America rainforest",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$16-28",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Dusty Miller",
+  "sci": "Senecio cineraria",
+  "fam": "Asteraceae",
+  "tj": "Dusty Miller",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Pyrrolizidine alkaloids \u2014 chronic/large ingestion causes liver damage; single nibble usually only mild GI upset",
+  "climate": "Mediterranean",
+  "zone": "7-10 (grown as annual further north)",
+  "season": "Year-round foliage (bedding/cut greenery)",
+  "light": "Full sun",
+  "water": "Cut stem, long vase life",
+  "dried": "Yes",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Easter Lily / Asiatic Lily / Stargazer Lily / Tiger Lily",
+  "sci": "Lilium spp.",
+  "fam": "Liliaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "Toxic (mild \u2014 GI only)",
+  "horse": "Unknown",
+  "principle": "Unknown nephrotoxin, ALL parts incl. pollen/water \u2014 acute kidney failure in cats within 24-72hrs",
+  "climate": "Northern Hemisphere temperate",
+  "zone": "4-9 (garden); year-round florist import",
+  "season": "Peak Jun-Aug (garden); Easter season (potted)",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, remove pollen-heavy anthers if used near pets is not sufficient \u2014 avoid entirely",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Echeveria",
+  "sci": "Echeveria spp.",
+  "fam": "Crassulaceae",
+  "tj": "Echeveria / Succulent Garden",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Mexico, Central America (arid)",
+  "zone": "9-11",
+  "season": "Year-round",
+  "light": "Bright direct to indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$3-5",
+  "retail": "$6-10",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Elephant Ear",
+  "sci": "Colocasia esculenta",
+  "fam": "Araceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 oral irritation, swelling",
+  "climate": "Southeast Asia",
+  "zone": "9-11 (grown as annual further north)",
+  "season": "Foliage spring-fall",
+  "light": "Bright indirect to partial sun",
+  "water": "Keep evenly moist, likes humidity",
+  "dried": "No",
+  "wholesale": "$8-14",
+  "retail": "$20-32",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "English Ivy",
+  "sci": "Hedera helix",
+  "fam": "Araliaceae",
+  "tj": "English Ivy",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Triterpenoid saponins \u2014 vomiting, diarrhea, drooling",
+  "climate": "Europe/Western Asia",
+  "zone": "4-9",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let top inch dry",
+  "dried": "Yes (garland/greenery use)",
+  "wholesale": "$3-6",
+  "retail": "$8-14",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Eucalyptus (Silver Dollar/Seeded)",
+  "sci": "Eucalyptus spp.",
+  "fam": "Myrtaceae",
+  "tj": "Eucalyptus (bunch)",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Essential oils (eucalyptol) \u2014 vomiting, diarrhea, drooling, weakness",
+  "climate": "Australia",
+  "zone": "8-11 (grown as houseplant/cut greenery elsewhere)",
+  "season": "Year-round (cut greenery)",
+  "light": "Full sun (as landscape plant)",
+  "water": "Cut stem, change water every 3-4 days",
+  "dried": "Yes (classic dried greenery)",
+  "wholesale": "$2-4/bunch",
+  "retail": "$6-10/bunch",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Fiddle Leaf Fig",
+  "sci": "Ficus lyrata",
+  "fam": "Moraceae",
+  "tj": "Fiddle Leaf Fig",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Ficin/sap \u2014 oral & skin irritation, GI upset",
+  "climate": "Western Africa rainforest",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Let top 2in dry",
+  "dried": "No",
+  "wholesale": "$15-25",
+  "retail": "$40-75",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Fittonia / Nerve Plant",
+  "sci": "Fittonia albivenis",
+  "fam": "Acanthaceae",
+  "tj": "Fittonia",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Peruvian rainforest floor",
+  "zone": "11-12",
+  "season": "Year-round foliage",
+  "light": "Medium indirect, high humidity",
+  "water": "Keep consistently moist",
+  "dried": "No",
+  "wholesale": "$3-5",
+  "retail": "$7-10",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Flapjacks",
+  "sci": "Kalanchoe luciae",
+  "fam": "Crassulaceae",
+  "tj": "Flapjacks",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Cardiac glycosides \u2014 vomiting, diarrhea",
+  "climate": "South Africa (arid)",
+  "zone": "9-11",
+  "season": "Year-round, blooms spring",
+  "light": "Bright direct/indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Flowering Cherry Blossom (branch)",
+  "sci": "Prunus spp.",
+  "fam": "Rosaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 genuinely mixed evidence",
+  "dog": "Unknown \u2014 genuinely mixed evidence",
+  "horse": "Unknown",
+  "principle": "Prunus as a genus carries a well-documented cyanogenic risk in pits and WILTED/damaged leaves; fresh ornamental blossom branches specifically are not confirmed toxic or safe \u2014 treat cautiously, especially as leaves wilt or drop",
+  "climate": "East Asia",
+  "zone": "5-8",
+  "season": "Peak Mar-Apr (short window)",
+  "light": "Full sun",
+  "water": "Cut branch, smash/split woody ends for water uptake",
+  "dried": "No (blossoms shatter)",
+  "wholesale": "$3-6/stem",
+  "retail": "$10-15/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Forsythia (branch)",
+  "sci": "Forsythia x intermedia",
+  "fam": "Oleaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found",
+  "climate": "East Asia",
+  "zone": "5-8",
+  "season": "Peak Mar-Apr (earliest spring branch)",
+  "light": "Full sun",
+  "water": "Cut branch, can force blooms indoors 2-3 weeks early",
+  "dried": "No (blooms shatter)",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Foxglove",
+  "sci": "Digitalis purpurea",
+  "fam": "Plantaginaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "FATAL",
+  "horse": "Toxic (severe)",
+  "principle": "Cardiac glycosides (digoxin/digitoxin), ALL parts incl. vase water \u2014 arrhythmia, heart failure, death; onset can be under 1hr in cats",
+  "climate": "Europe/Western Asia/Northwest Africa",
+  "zone": "4-8 (biennial)",
+  "season": "Peak Jun-Jul",
+  "light": "Full sun to part shade",
+  "water": "Cut stem \u2014 ASPCA/vet sources specifically advise against using as a cut flower indoors with cats present",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Freesia",
+  "sci": "Freesia spp.",
+  "fam": "Iridaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "South Africa",
+  "zone": "9-11 (bulb, forced elsewhere)",
+  "season": "Peak winter-spring (forced)",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Gerbera Daisy",
+  "sci": "Gerbera jamesonii",
+  "fam": "Asteraceae",
+  "tj": "Gerbera Daisy",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "South Africa",
+  "zone": "8-11",
+  "season": "Year-round (greenhouse), peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.60-1.20/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Gladiolus",
+  "sci": "Gladiolus spp.",
+  "fam": "Iridaceae",
+  "tj": "Gladiolus",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Colchicine-like alkaloids, concentrated in corm \u2014 oral irritation, drooling, GI upset, lethargy",
+  "climate": "Southern Africa",
+  "zone": "7-10 (corm)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, remove bottom florets as they fade",
+  "dried": "No",
+  "wholesale": "$0.75-1.50/stem",
+  "retail": "$3-6/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Golden Pothos",
+  "sci": "Epipremnum aureum",
+  "fam": "Araceae",
+  "tj": "Pothos",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates \u2014 oral irritation, drooling, vomiting",
+  "climate": "French Polynesia (Moorea)",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$3-6",
+  "retail": "$8-14",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Goldenrod (Solidago)",
+  "sci": "Solidago spp.",
+  "fam": "Asteraceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found",
+  "climate": "North America (native)",
+  "zone": "3-9",
+  "season": "Peak late summer-fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 3 days",
+  "dried": "Yes",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Haworthia",
+  "sci": "Haworthia spp.",
+  "fam": "Asphodelaceae",
+  "tj": "Haworthia",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "South Africa (arid)",
+  "zone": "10-11",
+  "season": "Year-round",
+  "light": "Bright indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$3-5",
+  "retail": "$6-10",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Heartleaf Philodendron",
+  "sci": "Philodendron hederaceum",
+  "fam": "Araceae",
+  "tj": "Philodendron",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates \u2014 oral irritation, swelling, vomiting",
+  "climate": "Central America/Caribbean rainforest",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium to bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Hollyhock",
+  "sci": "Alcea rosea",
+  "fam": "Malvaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "climate": "Southwest/Central Asia",
+  "zone": "3-8 (biennial)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Hosta (Plantain Lily)",
+  "sci": "Hosta plantaginea",
+  "fam": "Liliaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Saponins \u2014 vomiting, diarrhea, depression",
+  "climate": "East Asia",
+  "zone": "3-9",
+  "season": "Foliage spring-fall; blooms summer",
+  "light": "Part to full shade",
+  "water": "Cut leaf/stem, condition well, long vase life",
+  "dried": "No",
+  "wholesale": "$1-2/leaf",
+  "retail": "$4-7/leaf",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Hoya / Wax Plant",
+  "sci": "Hoya carnosa",
+  "fam": "Apocynaceae",
+  "tj": "Hoya",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Southeast Asia/Australia (epiphyte)",
+  "zone": "10-12",
+  "season": "Blooms summer",
+  "light": "Bright indirect",
+  "water": "Let dry between waterings",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$12-20",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Hyacinth",
+  "sci": "Hyacinthus orientalis",
+  "fam": "Asparagaceae",
+  "tj": "Hyacinth (potted/bunch)",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Alkaloids, concentrated in bulb \u2014 severe GI upset, tremors if bulb eaten",
+  "climate": "Eastern Mediterranean",
+  "zone": "4-8 (bulb, forced elsewhere)",
+  "season": "Peak Mar-Apr (forced Dec-Mar)",
+  "light": "Bright indirect to full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.60-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Hydrangea",
+  "sci": "Hydrangea macrophylla",
+  "fam": "Hydrangeaceae",
+  "tj": "Hydrangea",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Cyanogenic glycosides \u2014 vomiting, diarrhea, lethargy",
+  "climate": "Japan/East Asia",
+  "zone": "3-9",
+  "season": "Peak Jun-Sep",
+  "light": "Part shade",
+  "water": "Cut stem, change water daily, dip in alum to help wilting",
+  "dried": "Yes (popular dried)",
+  "wholesale": "$3-6/stem",
+  "retail": "$10-18/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Iris (Bearded/Flag)",
+  "sci": "Iris species",
+  "fam": "Iridaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Pentacyclic terpenoids (zeorin, missourin, missouriensin), concentrated in rhizome \u2014 salivation, vomiting, drooling, lethargy, diarrhea",
+  "climate": "Northern Hemisphere temperate",
+  "zone": "3-9 (rhizome)",
+  "season": "Peak spring",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.60-1.20/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Jade Plant",
+  "sci": "Crassula ovata",
+  "fam": "Crassulaceae",
+  "tj": "Jade Plant",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Unknown compound \u2014 vomiting, incoordination, low heart rate",
+  "climate": "South Africa/Mozambique (arid)",
+  "zone": "10-11",
+  "season": "Year-round, may bloom winter",
+  "light": "Bright direct/indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Larkspur / Delphinium",
+  "sci": "Delphinium spp.",
+  "fam": "Ranunculaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "FATAL",
+  "horse": "Toxic (severe)",
+  "principle": "Diterpenoid alkaloids, ALL parts (seeds/new growth most concentrated) \u2014 neuromuscular paralysis, cardiac arrhythmia, respiratory failure, death",
+  "climate": "Northern Hemisphere temperate",
+  "zone": "3-7 (perennial)/annual (Consolida/annual larkspur)",
+  "season": "Peak Jun-Aug",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Lavender",
+  "sci": "Lavandula angustifolia",
+  "fam": "Lamiaceae",
+  "tj": "Lavender",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Linalool/linalyl acetate \u2014 vomiting, GI upset in large amounts; low risk from casual sniffing",
+  "climate": "Mediterranean",
+  "zone": "5-9",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, or hang to dry immediately",
+  "dried": "Yes (classic dried herb/filler)",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Leatherleaf Fern",
+  "sci": "Rumohra adiantiformis",
+  "fam": "Dryopteridaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed (Boston/sword fern are confirmed safe, but this is a different genus)",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Ferns as a class are usually low-risk, but this specific genus lacks a confirmed source",
+  "climate": "Southern Hemisphere subtropics",
+  "zone": "9-11",
+  "season": "Year-round (cut greenery)",
+  "light": "Part to full shade",
+  "water": "Cut stem, excellent vase life, change water weekly",
+  "dried": "Yes",
+  "wholesale": "$0.75-1.50/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "UNVERIFIED",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Lily of the Valley",
+  "sci": "Convallaria majalis",
+  "fam": "Asparagaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "Toxic (severe)",
+  "horse": "Toxic",
+  "principle": "Cardiac glycosides, ALL parts \u2014 arrhythmia, vomiting, seizures, can be fatal",
+  "climate": "Northern Hemisphere temperate woodlands",
+  "zone": "3-8",
+  "season": "Peak spring (Apr-May)",
+  "light": "Part to full shade",
+  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "dried": "No",
+  "wholesale": "$2-4/stem",
+  "retail": "$8-15/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Lisianthus",
+  "sci": "Eustoma grandiflorum",
+  "fam": "Gentianaceae",
+  "tj": "Lisianthus",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Southern US/Mexico/Caribbean",
+  "zone": "8-10 (grown as annual elsewhere)",
+  "season": "Peak summer; year-round import",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 3 days, excellent vase life",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Lucky Bamboo",
+  "sci": "Dracaena sanderiana",
+  "fam": "Asparagaceae",
+  "tj": "Lucky Bamboo",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 mild GI upset",
+  "climate": "Cameroon (Central Africa)",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Keep roots submerged in water",
+  "dried": "No",
+  "wholesale": "$3-6",
+  "retail": "$8-15",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Magnolia (branch/leaf)",
+  "sci": "Magnolia grandiflora",
+  "fam": "Magnoliaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Southeastern US",
+  "zone": "6-10",
+  "season": "Foliage year-round; blooms summer",
+  "light": "Full sun to part shade",
+  "water": "Cut branch, condition leaves before arranging",
+  "dried": "Yes (glycerin-preserved leaves popular)",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "SAFE",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Mint",
+  "sci": "Mentha spp.",
+  "fam": "Lamiaceae",
+  "tj": "Mint",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Essential oils \u2014 vomiting and diarrhea with large ingestions. ASPCA-confirmed toxic (dedicated page verified directly \u2014 corrects an earlier version of this database that had mint listed as safe)",
+  "climate": "Europe/Asia (widely naturalized)",
+  "zone": "3-11",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, keep evenly moist as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Money Tree",
+  "sci": "Pachira aquatica",
+  "fam": "Malvaceae",
+  "tj": "Money Tree",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Central/South American wetlands",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Let top 2in dry",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$20-35",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Oleander",
+  "sci": "Nerium oleander",
+  "fam": "Apocynaceae",
+  "tj": "",
+  "cat": "FATAL",
+  "dog": "FATAL",
+  "horse": "FATAL",
+  "principle": "Cardiac glycosides, ALL parts \u2014 arrhythmia, vomiting, tremors, death; also toxic dried",
+  "climate": "Mediterranean/Asia",
+  "zone": "8-11",
+  "season": "Peak summer bloom (garden/landscape shrub)",
+  "light": "Full sun",
+  "water": "Cut stem if used decoratively \u2014 avoid entirely if pets present",
+  "dried": "No (remains toxic even dried)",
+  "wholesale": "n/a \u2014 not typically sold as cut flower",
+  "retail": "n/a",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO"
+  ]
+ },
+ {
+  "name": "Olive Branch",
+  "sci": "Olea europaea",
+  "fam": "Oleaceae",
+  "tj": "",
+  "cat": "Non-toxic (fruit pit is a choking/GI-obstruction hazard, not toxic)",
+  "dog": "Non-toxic (same pit caution)",
+  "horse": "Non-toxic",
+  "principle": "None known (foliage/wood)",
+  "climate": "Mediterranean",
+  "zone": "8-11",
+  "season": "Year-round (cut greenery)",
+  "light": "Full sun",
+  "water": "Cut stem, long vase life",
+  "dried": "Yes",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-10/stem",
+  "tags": [
+   "SAFE",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Orchid (Phalaenopsis)",
+  "sci": "Phalaenopsis spp.",
+  "fam": "Orchidaceae",
+  "tj": "Orchid",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Southeast Asia/Australia (epiphyte)",
+  "zone": "10-12",
+  "season": "Blooms 2-3 months, often reblooms",
+  "light": "Bright indirect",
+  "water": "Ice cube or soak method weekly",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$25-50",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Pampas Grass",
+  "sci": "Cortaderia selloana",
+  "fam": "Poaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed systemic toxin found; plumes are sharp/fibrous and can cause mechanical mouth injury regardless of toxicity",
+  "climate": "South America",
+  "zone": "7-10 (landscape); grown widely for dried plume trade",
+  "season": "Peak fall (plumes)",
+  "light": "Full sun",
+  "water": "Not applicable \u2014 used dried",
+  "dried": "Yes (industry-standard dried element)",
+  "wholesale": "$3-8/stem",
+  "retail": "$10-25/stem",
+  "tags": [
+   "UNVERIFIED",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Panda Plant",
+  "sci": "Kalanchoe tomentosa",
+  "fam": "Crassulaceae",
+  "tj": "Panda Plant",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Cardiac glycosides \u2014 vomiting, diarrhea; rare severe cardiac effects in large amounts",
+  "climate": "Madagascar (arid)",
+  "zone": "9-11",
+  "season": "Year-round",
+  "light": "Bright indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Parlor Palm",
+  "sci": "Chamaedorea elegans",
+  "fam": "Arecaceae",
+  "tj": "Parlor Palm",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Mexico, Guatemala rainforest understory",
+  "zone": "10-11",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$15-25",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Peace Lily",
+  "sci": "Spathiphyllum spp.",
+  "fam": "Araceae",
+  "tj": "Peace Lily",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates \u2014 NOT a true lily; oral irritation, not kidney-related",
+  "climate": "Tropical Americas",
+  "zone": "11-12",
+  "season": "Blooms spring-fall",
+  "light": "Low to medium indirect",
+  "water": "Keep evenly moist",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$16-28",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Peony",
+  "sci": "Paeonia lactiflora",
+  "fam": "Paeoniaceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Paeonol (bark most concentrated) \u2014 vomiting, diarrhea, lethargy",
+  "climate": "Central/East Asia",
+  "zone": "3-8",
+  "season": "Peak May-Jun (short season)",
+  "light": "Full sun",
+  "water": "Cut stem, harvest at 'marshmallow' bud stage for longest vase life",
+  "dried": "No",
+  "wholesale": "$2-4/stem",
+  "retail": "$6-12/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Peperomia (assorted)",
+  "sci": "Peperomia spp.",
+  "fam": "Piperaceae",
+  "tj": "Peperomia",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Central/South America tropics",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$8-14",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Philodendron 'Birkin'",
+  "sci": "Philodendron hybrid",
+  "fam": "Araceae",
+  "tj": "Philodendron Birkin",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Insoluble calcium oxalates",
+  "climate": "Cultivar (tropical origin)",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Medium to bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$8-14",
+  "retail": "$20-30",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Pincushion Flower (Scabiosa)",
+  "sci": "Scabiosa spp.",
+  "fam": "Caprifoliaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Europe/Asia/Africa",
+  "zone": "3-7 (annual/perennial by species)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (seed pods popular dried)",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Pittosporum",
+  "sci": "Pittosporum tobira",
+  "fam": "Pittosporaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 conflicting sources (not on ASPCA's dedicated toxic pages; one UK charity lists it safe)",
+  "dog": "Unknown \u2014 same conflict",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found; treat as unverified rather than trusting either source",
+  "climate": "Japan/China (coastal)",
+  "zone": "8-11",
+  "season": "Year-round (cut greenery)",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, long vase life, change water weekly",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "UNVERIFIED"
+  ]
+ },
+ {
+  "name": "Poinsettia",
+  "sci": "Euphorbia pulcherrima",
+  "fam": "Euphorbiaceae",
+  "tj": "Poinsettia",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Diterpenoid esters in sap \u2014 mild GI upset, oral irritation (toxicity often overstated)",
+  "climate": "Mexico/Central America",
+  "zone": "9-11",
+  "season": "Bract color Nov-Jan (holiday)",
+  "light": "Bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$12-20",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Ponytail Palm",
+  "sci": "Beaucarnea recurvata",
+  "fam": "Asparagaceae",
+  "tj": "Ponytail Palm",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Eastern Mexico (arid)",
+  "zone": "9-11",
+  "season": "Year-round",
+  "light": "Bright direct to indirect",
+  "water": "Drought-tolerant, let dry fully",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$15-25",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Prayer Plant",
+  "sci": "Maranta leuconeura",
+  "fam": "Marantaceae",
+  "tj": "Prayer Plant",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Brazilian rainforest",
+  "zone": "11-12",
+  "season": "Year-round foliage",
+  "light": "Medium indirect",
+  "water": "Keep evenly moist, filtered water",
+  "dried": "No",
+  "wholesale": "$4-7",
+  "retail": "$10-16",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Protea",
+  "sci": "Protea spp.",
+  "fam": "Proteaceae",
+  "tj": "Protea",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "Not formally documented",
+  "climate": "South Africa",
+  "zone": "9-11",
+  "season": "Peak fall-winter (import)",
+  "light": "Full sun",
+  "water": "Cut stem, very long vase life",
+  "dried": "Yes (excellent dried, holds shape)",
+  "wholesale": "$4-8/stem",
+  "retail": "$12-20/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Queen Anne's Lace",
+  "sci": "Daucus carota",
+  "fam": "Apiaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from available sources",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Sap contains furanocoumarins (documented human contact-dermatitis risk); systemic pet toxicity not confirmed either way",
+  "climate": "Europe/Southwest Asia (naturalized in North America)",
+  "zone": "3-9",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes",
+  "wholesale": "$0.40-0.80/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Ranunculus",
+  "sci": "Ranunculus asiaticus",
+  "fam": "Ranunculaceae",
+  "tj": "Ranunculus",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic",
+  "principle": "Ranunculin/protoanemonin (fresh sap) \u2014 oral irritation, blistering; dried/dead plant safer",
+  "climate": "Mediterranean/Southwest Asia",
+  "zone": "8-10 (corm)",
+  "season": "Peak Feb-May",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No (protoanemonin degrades but petals shatter)",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Rose",
+  "sci": "Rosa spp.",
+  "fam": "Rosaceae",
+  "tj": "Roses (bouquets)",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "Thorns can cause mechanical injury only",
+  "climate": "Northern Hemisphere temperate (varies by cultivar)",
+  "zone": "3-9 (garden); year-round cut flower",
+  "season": "Peak Jun-Sep (garden); imported year-round",
+  "light": "Full sun (as garden plant)",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (classic dried/pressed flower)",
+  "wholesale": "$0.50-2.50/stem",
+  "retail": "$3-8/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Rubber Plant",
+  "sci": "Ficus elastica",
+  "fam": "Moraceae",
+  "tj": "Rubber Plant",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Sap \u2014 irritant, GI upset",
+  "climate": "Northeast India/Indonesia",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Let top 2in dry",
+  "dried": "No",
+  "wholesale": "$8-15",
+  "retail": "$20-35",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Ruscus (Israeli Ruscus)",
+  "sci": "Ruscus spp.",
+  "fam": "Asparagaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed; family (Asparagaceae) suggests possible mild saponin irritation",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "Not formally documented \u2014 treat with caution pending verification given family",
+  "climate": "Mediterranean/Western Asia",
+  "zone": "7-9",
+  "season": "Year-round (cut greenery)",
+  "light": "Part shade (as landscape plant)",
+  "water": "Cut stem, very long vase life, change water weekly",
+  "dried": "Yes",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "UNVERIFIED",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Sago Palm",
+  "sci": "Cycas revoluta",
+  "fam": "Cycadaceae",
+  "tj": "Sago Palm",
+  "cat": "FATAL",
+  "dog": "FATAL",
+  "horse": "Unknown",
+  "principle": "Cycasin, ALL parts (seeds most concentrated) \u2014 liver failure, seizures, death",
+  "climate": "Southern Japan",
+  "zone": "8-10 (houseplant elsewhere)",
+  "season": "Year-round foliage",
+  "light": "Bright direct/indirect",
+  "water": "Let dry between waterings",
+  "dried": "No",
+  "wholesale": "$15-30",
+  "retail": "$40-80",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "FUCK NO"
+  ]
+ },
+ {
+  "name": "Salal / Lemon Leaf",
+  "sci": "Gaultheria shallon",
+  "fam": "Ericaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "Not formally documented \u2014 Ericaceae family includes some toxic genera (azalea); treat cautiously",
+  "climate": "Pacific Northwest North America",
+  "zone": "6-8",
+  "season": "Year-round (cut greenery)",
+  "light": "Part to full shade (as landscape plant)",
+  "water": "Cut stem, very long vase life",
+  "dried": "Yes",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "UNVERIFIED",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Schefflera / Umbrella Tree",
+  "sci": "Schefflera arboricola",
+  "fam": "Araliaceae",
+  "tj": "Schefflera",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 oral irritation, vomiting",
+  "climate": "Taiwan",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Bright indirect",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$8-14",
+  "retail": "$20-32",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Sea Holly (Eryngium)",
+  "sci": "Eryngium spp.",
+  "fam": "Apiaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "Not formally documented; spiny bracts pose a mechanical-injury risk regardless of toxicity",
+  "climate": "Europe/Mediterranean",
+  "zone": "5-9",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, very long vase life",
+  "dried": "Yes (excellent dried)",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "UNVERIFIED",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Smilax (florist vine)",
+  "sci": "Smilax spp.",
+  "fam": "Smilacaceae",
+  "tj": "",
+  "cat": "Unknown \u2014 appears in ASPCA's plant index alongside both toxic and non-toxic entries; this genus's status not confirmed from a dedicated source",
+  "dog": "Unknown \u2014 same gap",
+  "horse": "Unknown",
+  "principle": "Not confirmed either direction \u2014 common wedding arch/garland vine, verify before using near cats",
+  "climate": "Southeastern US",
+  "zone": "7-10",
+  "season": "Year-round (cut greenery/vine)",
+  "light": "Part sun (as landscape vine)",
+  "water": "Cut vine, mist to extend life",
+  "dried": "No",
+  "wholesale": "$3-6/bunch",
+  "retail": "$10-18/bunch",
+  "tags": [
+   "UNVERIFIED"
+  ]
+ },
+ {
+  "name": "Snake Plant",
+  "sci": "Dracaena trifasciata",
+  "fam": "Asparagaceae",
+  "tj": "Snake Plant",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 GI upset, drooling",
+  "climate": "West Africa (arid)",
+  "zone": "9-11",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$15-25",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Snapdragon",
+  "sci": "Antirrhinum majus",
+  "fam": "Plantaginaceae",
+  "tj": "Snapdragons (bunch)",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Mediterranean",
+  "zone": "7-11 (annual elsewhere)",
+  "season": "Peak spring-early summer",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "No",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Spider Plant",
+  "sci": "Chlorophytum comosum",
+  "fam": "Asparagaceae",
+  "tj": "Spider Plant",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known; safe if chewed",
+  "climate": "South Africa (tropical/subtropical)",
+  "zone": "9-11 (houseplant elsewhere)",
+  "season": "Year-round foliage; blooms sporadically",
+  "light": "Bright indirect to low light",
+  "water": "Let top inch dry between waterings",
+  "dried": "No",
+  "wholesale": "$3-5 (4in pot)",
+  "retail": "$7-10",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Statice",
+  "sci": "Limonium sinuatum",
+  "fam": "Plumbaginaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Mediterranean",
+  "zone": "8-11 (annual elsewhere)",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "Yes (excellent dried flower)",
+  "wholesale": "$0.40-0.80/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Stephanotis (Madagascar Jasmine / Bride's Flower)",
+  "sci": "Stephanotis floribunda",
+  "fam": "Apocynaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly); literally called 'Bride's Flower' in ASPCA's own materials",
+  "climate": "Madagascar",
+  "zone": "10-11 (grown as vine/houseplant elsewhere)",
+  "season": "Year-round import; blooms summer",
+  "light": "Bright indirect",
+  "water": "Cut stem, individual blooms often wired for bouquets",
+  "dried": "No",
+  "wholesale": "$1.50-3/stem",
+  "retail": "$5-9/stem",
+  "tags": [
+   "SAFE"
+  ]
+ },
+ {
+  "name": "Stock (Matthiola)",
+  "sci": "Matthiola incana",
+  "fam": "Brassicaceae",
+  "tj": "Stock",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Southern Europe (Mediterranean)",
+  "zone": "7-10 (annual elsewhere)",
+  "season": "Peak spring",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-6/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "String of Pearls",
+  "sci": "Curio rowleyanus",
+  "fam": "Asteraceae",
+  "tj": "String of Pearls",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Sap/pyrrolizidine-related compounds \u2014 vomiting, drooling, skin irritation",
+  "climate": "Southwest Africa (arid)",
+  "zone": "9-11",
+  "season": "Year-round, blooms fall",
+  "light": "Bright indirect",
+  "water": "Let dry fully between waterings",
+  "dried": "No",
+  "wholesale": "$5-9",
+  "retail": "$14-22",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Sunflower",
+  "sci": "Helianthus annuus",
+  "fam": "Asteraceae",
+  "tj": "Sunflowers (bunch)",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "North America (native)",
+  "zone": "2-11 (annual)",
+  "season": "Peak Jul-Sep",
+  "light": "Full sun",
+  "water": "Cut stem, change water daily",
+  "dried": "Yes (seed heads)",
+  "wholesale": "$0.75-1.50/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Sweet Pea",
+  "sci": "Lathyrus odoratus",
+  "fam": "Fabaceae",
+  "tj": "",
+  "cat": "Toxic (mild-moderate)",
+  "dog": "Toxic (mild-moderate)",
+  "horse": "Toxic",
+  "principle": "Aminopropionitrile (seeds most concentrated) \u2014 lethargy, incoordination, tremors with repeated/large ingestion",
+  "climate": "Sicily/Southern Italy",
+  "zone": "2-11 (annual)",
+  "season": "Peak spring",
+  "light": "Full sun",
+  "water": "Cut stem, change water daily",
+  "dried": "No",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Thyme",
+  "sci": "Thymus vulgaris",
+  "fam": "Lamiaceae",
+  "tj": "Thyme",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "climate": "Mediterranean",
+  "zone": "5-9",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "tags": [
+   "SAFE",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Ti Plant / Cordyline",
+  "sci": "Cordyline fruticosa / C. terminalis",
+  "fam": "Asparagaceae",
+  "tj": "Ti Plant",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Saponins \u2014 vomiting (occasionally bloody), depression, drooling, dilated pupils (cats). ASPCA-confirmed via dedicated toxicity page",
+  "climate": "Southeast Asia/Pacific Islands",
+  "zone": "10-12",
+  "season": "Year-round (cut foliage popular for leis, wraps, arches)",
+  "light": "Bright indirect",
+  "water": "Cut leaf, or potted: let top inch dry",
+  "dried": "Yes (leaves used fresh or dried in floral wraps)",
+  "wholesale": "$1-2/leaf",
+  "retail": "$4-6/leaf",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ]
+ },
+ {
+  "name": "Tulip",
+  "sci": "Tulipa spp.",
+  "fam": "Liliaceae",
+  "tj": "Tulips (potted/bunch)",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Unknown",
+  "principle": "Tulipalin A/B, concentrated in bulb \u2014 oral irritation, drooling, GI upset",
+  "climate": "Central Asia",
+  "zone": "3-8 (bulb, forced elsewhere)",
+  "season": "Peak Mar-May",
+  "light": "Full sun (garden); bright indirect (potted)",
+  "water": "Cut stem, cool water, change daily",
+  "dried": "No",
+  "wholesale": "$0.40-0.80/stem",
+  "retail": "$2-4/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Venus Flytrap",
+  "sci": "Dionaea muscipula",
+  "fam": "Droseraceae",
+  "tj": "",
+  "cat": "Unknown \u2014 not ASPCA-listed",
+  "dog": "Unknown \u2014 not ASPCA-listed",
+  "horse": "Unknown",
+  "principle": "No confirmed toxic principle found",
+  "climate": "NC/SC coastal bogs",
+  "zone": "8-10",
+  "season": "Year-round, dormant winter",
+  "light": "Bright direct, high humidity",
+  "water": "Distilled/rain water only, keep boggy",
+  "dried": "No",
+  "wholesale": "$5-8",
+  "retail": "$12-18",
+  "tags": [
+   "UNVERIFIED"
+  ]
+ },
+ {
+  "name": "Veronica (Speedwell)",
+  "sci": "Veronica spicata",
+  "fam": "Plantaginaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Europe/Asia",
+  "zone": "3-8",
+  "season": "Peak summer",
+  "light": "Full sun to part shade",
+  "water": "Cut stem, change water every 2-3 days",
+  "dried": "No",
+  "wholesale": "$0.60-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Wax Flower",
+  "sci": "Chamelaucium uncinatum",
+  "fam": "Myrtaceae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known",
+  "climate": "Western Australia",
+  "zone": "9-11",
+  "season": "Peak winter-spring",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 3-4 days",
+  "dried": "Yes (holds shape well)",
+  "wholesale": "$1-2/stem",
+  "retail": "$4-7/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "Weeping Fig",
+  "sci": "Ficus benjamina",
+  "fam": "Moraceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic",
+  "principle": "Sap/ficin \u2014 irritant, GI upset",
+  "climate": "South/Southeast Asia, Australia",
+  "zone": "10-12",
+  "season": "Year-round foliage",
+  "light": "Bright indirect, dislikes moving",
+  "water": "Let top inch dry",
+  "dried": "No",
+  "wholesale": "$10-18",
+  "retail": "$25-45",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Wisteria",
+  "sci": "Wisteria spp.",
+  "fam": "Fabaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Lectin, wisterin glycoside \u2014 vomiting (sometimes with blood), diarrhea, depression",
+  "climate": "East Asia/Eastern US",
+  "zone": "5-9",
+  "season": "Peak Apr-May (cascading bloom)",
+  "light": "Full sun",
+  "water": "Cut stem if used decoratively, short vase life",
+  "dried": "No",
+  "wholesale": "$3-6/stem",
+  "retail": "$10-18/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL"
+  ]
+ },
+ {
+  "name": "Yarrow",
+  "sci": "Achillea millefolium",
+  "fam": "Asteraceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "Achillein (glycoalkaloid), monoterpenes, achillin \u2014 vomiting, diarrhea, colic, drooling, dermatitis",
+  "climate": "Europe/Western Asia (naturalized worldwide)",
+  "zone": "3-9",
+  "season": "Peak summer",
+  "light": "Full sun",
+  "water": "Cut stem, excellent vase life",
+  "dried": "Yes (popular boho/rustic dried filler)",
+  "wholesale": "$0.60-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "SEASONAL",
+   "DRY-FRIENDLY"
+  ]
+ },
+ {
+  "name": "ZZ Plant",
+  "sci": "Zamioculcas zamiifolia",
+  "fam": "Araceae",
+  "tj": "ZZ Plant",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Calcium oxalates \u2014 oral irritation, GI upset",
+  "climate": "Eastern Africa (drought-prone)",
+  "zone": "9-11",
+  "season": "Year-round foliage",
+  "light": "Low to bright indirect",
+  "water": "Let dry fully, very drought-tolerant",
+  "dried": "No",
+  "wholesale": "$6-10",
+  "retail": "$18-28",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "MILD"
+  ]
+ },
+ {
+  "name": "Zinnia",
+  "sci": "Zinnia elegans",
+  "fam": "Asteraceae",
+  "tj": "Zinnia",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "climate": "Mexico",
+  "zone": "3-10 (annual)",
+  "season": "Peak summer-fall",
+  "light": "Full sun",
+  "water": "Cut stem, change water every 2 days",
+  "dried": "No",
+  "wholesale": "$0.50-1/stem",
+  "retail": "$3-5/stem",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ]
+ }
+];
+
+(function () {
+  "use strict";
+
+  const state = {
+    animal: "cat",
+    search: "",
+    statuses: new Set(),   // FATAL | TOXIC | SAFE | UNVERIFIED
+    tags: new Set(),       // SEASONAL | DRY-FRIENDLY | TJ
+    plants: [],
+  };
+
+  const drawerEl = document.getElementById("drawer");
+  const resultCountEl = document.getElementById("result-count");
+  const emptyStateEl = document.getElementById("empty-state");
+  const specimenCountEl = document.getElementById("specimen-count");
+  const cardTemplate = document.getElementById("card-template");
+  const clearBtn = document.getElementById("clear-filters");
+
+  // -------- classify a per-animal toxicity string into a status bucket --------
+  function classify(text) {
+    if (!text) return "UNVERIFIED";
+    const t = text.trim();
+    if (/^FATAL/i.test(t)) return "FATAL";
+    if (/^Non-toxic/i.test(t)) return "SAFE";
+    if (/^Toxic/i.test(t)) return "TOXIC";
+    return "UNVERIFIED";
+  }
+
+  const STATUS_LABEL = {
+    FATAL: "Fuck No",
+    TOXIC: "Toxic",
+    SAFE: "Safe",
+    UNVERIFIED: "Unverified",
+  };
+
+  // -------- load embedded data (no fetch, no separate file, no path to break) --------
+  try {
+    state.plants = PLANT_DATA;
+    specimenCountEl.textContent = PLANT_DATA.length;
+    render();
+  } catch (err) {
+    drawerEl.innerHTML =
+      '<p style="color:#F1EAD9;font-family:sans-serif;padding:2rem;">Could not read the embedded plant data.</p>';
+    console.error(err);
+  }
+
+  // -------- wire up controls --------
+  document.getElementById("search").addEventListener("input", (e) => {
+    state.search = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  document.querySelectorAll(".animal-toggle__btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".animal-toggle__btn")
+        .forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      state.animal = btn.dataset.animal;
+      render();
+    });
+  });
+
+  document.querySelectorAll("#status-chips .chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const s = chip.dataset.status;
+      if (state.statuses.has(s)) {
+        state.statuses.delete(s);
+        chip.setAttribute("aria-pressed", "false");
+      } else {
+        state.statuses.add(s);
+        chip.setAttribute("aria-pressed", "true");
+      }
+      render();
+    });
+  });
+
+  document.querySelectorAll("#tag-chips .chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const t = chip.dataset.tag;
+      if (state.tags.has(t)) {
+        state.tags.delete(t);
+        chip.setAttribute("aria-pressed", "false");
+      } else {
+        state.tags.add(t);
+        chip.setAttribute("aria-pressed", "true");
+      }
+      render();
+    });
+  });
+
+  clearBtn.addEventListener("click", () => {
+    state.search = "";
+    state.statuses.clear();
+    state.tags.clear();
+    document.getElementById("search").value = "";
+    document
+      .querySelectorAll(".chip")
+      .forEach((c) => c.setAttribute("aria-pressed", "false"));
+    render();
+  });
+
+  // -------- filtering --------
+  function matches(plant) {
+    if (state.search) {
+      const hay = (plant.name + " " + plant.sci + " " + plant.fam).toLowerCase();
+      if (!hay.includes(state.search)) return false;
+    }
+
+    if (state.statuses.size > 0) {
+      const status = classify(plant[state.animal]);
+      if (!state.statuses.has(status)) return false;
+    }
+
+    if (state.tags.size > 0) {
+      const hasSeasonal = plant.tags.includes("SEASONAL");
+      const hasDry = plant.tags.includes("DRY-FRIENDLY");
+      const hasTJ = !!plant.tj;
+      const anyMatch =
+        (state.tags.has("SEASONAL") && hasSeasonal) ||
+        (state.tags.has("DRY-FRIENDLY") && hasDry) ||
+        (state.tags.has("TJ") && hasTJ);
+      if (!anyMatch) return false;
+    }
+
+    return true;
+  }
+
+  // -------- render --------
+  function render() {
+    const filtered = state.plants.filter(matches);
+
+    resultCountEl.textContent = filtered.length
+      ? `Showing ${filtered.length} of ${state.plants.length} specimens — ${state.animal}s`
+      : "";
+    emptyStateEl.hidden = filtered.length !== 0;
+    clearBtn.hidden = !(
+      state.search ||
+      state.statuses.size > 0 ||
+      state.tags.size > 0
+    );
+
+    drawerEl.innerHTML = "";
+    const frag = document.createDocumentFragment();
+
+    filtered.forEach((plant) => {
+      const node = cardTemplate.content.cloneNode(true);
+      const status = classify(plant[state.animal]);
+
+      const stampEl = node.querySelector(".card__stamp");
+      stampEl.dataset.status = status;
+      stampEl.textContent = STATUS_LABEL[status];
+
+      node.querySelector(".card__name").textContent = plant.name;
+      node.querySelector(".card__sci").textContent = plant.sci;
+      node.querySelector(".card__fam").textContent = plant.fam + " family";
+
+      node.querySelector(".f-season").textContent = plant.season || "—";
+      node.querySelector(".f-light").textContent = plant.light || "—";
+
+      node.querySelector(".f-principle").textContent = plant.principle || "—";
+      node.querySelector(".f-climate").textContent = plant.climate || "—";
+      node.querySelector(".f-zone").textContent = plant.zone || "—";
+      node.querySelector(".f-water").textContent = plant.water || "—";
+      node.querySelector(".f-dried").textContent = plant.dried || "—";
+      node.querySelector(".f-wholesale").textContent = plant.wholesale || "—";
+      node.querySelector(".f-retail").textContent = plant.retail || "—";
+
+      const tjRow = node.querySelector(".f-tj-row");
+      if (plant.tj) {
+        tjRow.classList.add("is-shown");
+        node.querySelector(".f-tj").textContent = plant.tj;
+      }
+
+      node.querySelector(".f-cat-status").textContent = plant.cat;
+      node.querySelector(".f-dog-status").textContent = plant.dog;
+      node.querySelector(".f-horse-status").textContent = plant.horse;
+
+      const expandBtn = node.querySelector(".card__expand");
+      const detailEl = node.querySelector(".card__detail");
+      expandBtn.addEventListener("click", () => {
+        const open = detailEl.classList.toggle("is-open");
+        expandBtn.setAttribute("aria-expanded", String(open));
+      });
+
+      frag.appendChild(node);
+    });
+
+    drawerEl.appendChild(frag);
+  }
+})();
+
+</script>
+</body>
+</html>
