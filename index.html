@@ -117,6 +117,12 @@ body{
   font-size: .86rem;
   margin: 0;
 }
+.drawer-front__meta a{
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.drawer-front__meta a:hover{ color: #E0BE4E; }
 .drawer-front__meta #specimen-count{
   font-family: var(--mono);
   color: var(--gold);
@@ -142,6 +148,23 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   display:flex; gap: .75rem; align-items:center; flex-wrap: wrap;
 }
 .control-panel__row + .control-panel__row{ margin-top: .75rem; }
+.control-panel__toggle{
+  display:flex; align-items:center; gap:.3rem;
+  font-family: var(--mono); font-size: .68rem; letter-spacing:.05em; text-transform:uppercase;
+  padding: .45rem .7rem;
+  border: 1.4px solid var(--ink);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  cursor:pointer;
+  flex-shrink:0;
+  margin-left: .5rem;
+}
+.control-panel__toggle:hover{ background: rgba(26,36,25,.08); }
+.control-panel__toggle .chevron{ transition: transform .18s ease; font-size: .7rem; display:inline-block; }
+.control-panel__toggle[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
+.control-panel--collapsed .control-panel__row--tags{ display:none; }
+
 .control-panel__row--tags{ row-gap: .6rem; }
 
 .search-slip{
@@ -434,9 +457,11 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
           <button class="animal-toggle__btn" data-animal="horse">Horses</button>
         </div>
       </div>
+
+      <button class="control-panel__toggle" id="toggle-filters" type="button" aria-expanded="true" aria-controls="filters-row" aria-label="Hide filters">Filters<span class="chevron" aria-hidden="true">&#8595;</span></button>
     </div>
 
-    <div class="control-panel__row control-panel__row--tags">
+    <div class="control-panel__row control-panel__row--tags" id="filters-row">
       <div class="chip-group">
         <span class="chip-group__label">Status</span>
         <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
@@ -3370,6 +3395,7 @@ const PLANT_DATA = [
     tags: new Set(),       // SEASONAL | DRY-FRIENDLY | TJ | FAVORITE
     plants: [],
     favorites: new Set(),  // plant names the user has starred
+    filtersCollapsed: false,
   };
 
   const FAVORITES_KEY = "favorites";
@@ -3414,6 +3440,8 @@ const PLANT_DATA = [
   const specimenCountEl = document.getElementById("specimen-count");
   const cardTemplate = document.getElementById("card-template");
   const clearBtn = document.getElementById("clear-filters");
+  const controlPanelEl = document.querySelector(".control-panel");
+  const toggleFiltersBtn = document.getElementById("toggle-filters");
 
   // -------- classify a per-animal toxicity string into a status bucket --------
   function classify(text) {
@@ -3446,9 +3474,40 @@ const PLANT_DATA = [
     }
   })();
 
+  // -------- collapsible filters (keeps search visible, hides the bulky chip rows) --------
+  function applyFiltersCollapsed() {
+    controlPanelEl.classList.toggle("control-panel--collapsed", state.filtersCollapsed);
+    toggleFiltersBtn.setAttribute("aria-expanded", String(!state.filtersCollapsed));
+    toggleFiltersBtn.setAttribute(
+      "aria-label",
+      state.filtersCollapsed ? "Show filters" : "Hide filters"
+    );
+  }
+
+  toggleFiltersBtn.addEventListener("click", () => {
+    state.filtersCollapsed = !state.filtersCollapsed;
+    applyFiltersCollapsed();
+  });
+
   // -------- wire up controls --------
   document.getElementById("search").addEventListener("input", (e) => {
+    const hadSearch = state.search !== "";
     state.search = e.target.value.trim().toLowerCase();
+
+    // First time typing a search on a phone-sized screen, fold the filter
+    // rows away automatically so results are visible right away. Only
+    // triggers on the empty -> non-empty transition, so it never fights a
+    // manual re-expand.
+    if (
+      !hadSearch &&
+      state.search !== "" &&
+      !state.filtersCollapsed &&
+      window.matchMedia("(max-width: 640px)").matches
+    ) {
+      state.filtersCollapsed = true;
+      applyFiltersCollapsed();
+    }
+
     render();
   });
 
@@ -3499,6 +3558,8 @@ const PLANT_DATA = [
     document
       .querySelectorAll(".chip")
       .forEach((c) => c.setAttribute("aria-pressed", "false"));
+    state.filtersCollapsed = false;
+    applyFiltersCollapsed();
     render();
   });
 
