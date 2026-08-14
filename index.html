@@ -131,7 +131,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
   display:flex; gap: .75rem; align-items:center; flex-wrap: wrap;
 }
 .control-panel__row + .control-panel__row{ margin-top: .75rem; }
-.control-panel__row--tags{ justify-content: space-between; }
+.control-panel__row--tags{ row-gap: .6rem; }
 
 .search-slip{
   flex: 1 1 260px;
@@ -172,19 +172,36 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 .chip--toxic{ color: var(--toxic-ink); }
 .chip--safe{ color: var(--safe-ink); }
 .chip--unverified{ color: var(--unverified-ink); }
-.chip[aria-pressed="true"]{ background: currentColor; }
-.chip--fatal[aria-pressed="true"]{ color:#fff; }
-.chip--toxic[aria-pressed="true"]{ color:#fff; }
-.chip--safe[aria-pressed="true"]{ color:#fff; }
-.chip--unverified[aria-pressed="true"]{ color:#fff; }
+
+.chip:hover[aria-pressed="false"]{ background: rgba(26,36,25,.06); }
+
+.chip--fatal[aria-pressed="true"]{ background: var(--fatal); border-color: var(--fatal); color:#fff; }
+.chip--toxic[aria-pressed="true"]{ background: var(--toxic); border-color: var(--toxic); color:#fff; }
+.chip--safe[aria-pressed="true"]{ background: var(--safe); border-color: var(--safe); color:#fff; }
+.chip--unverified[aria-pressed="true"]{ background: var(--unverified); border-color: var(--unverified); color:#fff; }
 
 .chip--tag{ color: var(--ink-soft); }
-.chip--tag[aria-pressed="true"]{ background: var(--ink-soft); color:#fff; }
+.chip--tag[aria-pressed="true"]{ background: var(--ink-soft); border-color: var(--ink-soft); color:#fff; }
+
+.chip-group{ display:flex; align-items:center; gap:.6rem; }
+.chip-group__label{
+  font-family: var(--mono); font-size: .62rem; letter-spacing:.09em; text-transform: uppercase;
+  color: var(--ink-soft); white-space: nowrap;
+}
+.control-panel__divider{
+  width: 1px; align-self: stretch; background: var(--parchment-dim); margin: 0 .35rem;
+}
+.animal-toggle-wrap{ display:flex; align-items:center; gap:.55rem; }
+.animal-toggle-wrap__label{
+  font-family: var(--mono); font-size: .62rem; letter-spacing:.09em; text-transform: uppercase;
+  color: var(--ink-soft); white-space:nowrap;
+}
 
 .clear-btn{
   font-family: var(--sans); font-size: .78rem; color: var(--ink-soft);
   background:none; border:0; text-decoration: underline; cursor:pointer;
   padding: .3rem 0;
+  margin-left: auto;
 }
 
 /* ============================================================
@@ -193,14 +210,16 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 .result-count{
   font-family: var(--mono); font-size: .74rem; letter-spacing:.05em; text-transform: uppercase;
   color: #C7D0C4; margin: 1.1rem .15rem .6rem;
+  min-height: 1.1rem;
 }
 
 .drawer{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
   gap: 1rem;
   padding-bottom: 3rem;
 }
+.drawer .card{ max-width: 460px; }
 
 .empty-state{
   color: var(--parchment); text-align:center; font-family: var(--sans);
@@ -317,8 +336,17 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
    ============================================================ */
 @media (max-width: 640px){
   .drawer-front{ padding: 3.2rem 1.25rem 2.4rem; }
-  .control-panel{ position: static; }
-  .control-panel__row--tags{ flex-direction: column; align-items:flex-start; }
+  .control-panel{
+    top: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: .85rem 1rem .8rem;
+  }
+  .control-panel__row + .control-panel__row{ margin-top: .6rem; }
+  .chip-group{ flex-direction: column; align-items: flex-start; gap: .35rem; }
+  .control-panel__divider{ display:none; }
+  .control-panel__row--tags{ gap: .85rem; }
+  .clear-btn{ margin-left: 0; }
+  .animal-toggle-wrap{ margin-left: auto; }
   .drawer{ grid-template-columns: 1fr; }
 }
 
@@ -355,28 +383,41 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
           <circle cx="8.5" cy="8.5" r="6" fill="none" stroke-width="1.6"/>
           <line x1="13" y1="13" x2="18" y2="18" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
-        <input type="text" id="search" placeholder="Search common name, scientific name, or family&hellip;" autocomplete="off">
+        <input type="text" id="search" placeholder="Search common name, scientific name, or family&hellip;" autocomplete="off" aria-label="Search plants by name, scientific name, or family">
       </label>
 
-      <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
-        <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
-        <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
-        <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+      <div class="animal-toggle-wrap">
+        <span class="animal-toggle-wrap__label">Toxicity for</span>
+        <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
+          <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
+          <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
+          <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+        </div>
       </div>
     </div>
 
     <div class="control-panel__row control-panel__row--tags">
-      <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
-        <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">Fuck No</button>
-        <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
-        <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
-        <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
+      <div class="chip-group">
+        <span class="chip-group__label">Status</span>
+        <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
+          <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">Fuck No</button>
+          <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
+          <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
+          <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
+        </div>
       </div>
-      <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
-        <button class="chip chip--tag" data-tag="SEASONAL">Seasonal</button>
-        <button class="chip chip--tag" data-tag="DRY-FRIENDLY">Dry-friendly</button>
-        <button class="chip chip--tag" data-tag="TJ">At Trader Joe's</button>
+
+      <div class="control-panel__divider" aria-hidden="true"></div>
+
+      <div class="chip-group">
+        <span class="chip-group__label">Show only</span>
+        <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
+          <button class="chip chip--tag" data-tag="SEASONAL" aria-pressed="false">Seasonal</button>
+          <button class="chip chip--tag" data-tag="DRY-FRIENDLY" aria-pressed="false">Dry-friendly</button>
+          <button class="chip chip--tag" data-tag="TJ" aria-pressed="false">At Trader Joe's</button>
+        </div>
       </div>
+
       <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
     </div>
   </section>
@@ -397,7 +438,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
     Not a substitute for veterinary guidance. Suspected ingestion &mdash; call ASPCA Poison Control
     <a href="tel:8884264435">(888) 426‑4435</a> or Pet Poison Helpline <a href="tel:8557647661">(855) 764‑7661</a>.
   </p>
-  <p class="colophon__small">Built for Olivia's floral work · Catalog last updated August 13, 2026</p>
+  <p class="colophon__small">Built for Olivia's floral work · maintained in the <code>PLANT_DATA</code> block inside <code>index.html</code></p>
 </footer>
 
 <template id="card-template">
