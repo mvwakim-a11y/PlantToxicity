@@ -58,7 +58,8 @@
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+input, textarea{ -webkit-user-select: text; user-select: text; }
 html{ scroll-behavior: smooth; background: var(--forest-deep); }
 body{
   margin:0;
@@ -183,6 +184,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   z-index: 21;
 }
 .sidebar-toggle:hover{ background: rgba(201,162,39,.1); }
+.sidebar-toggle:active{ transform: scale(.92); background: rgba(201,162,39,.18); }
 
 .sidebar__section + .sidebar__section{ margin-top: 1.1rem; padding-top: 1rem; border-top: 1px dashed var(--parchment-dim); }
 
@@ -218,6 +220,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 .animal-toggle__btn:first-child{ border-left:0; }
 .animal-toggle__btn.is-active{ background: var(--ink); color: var(--parchment); }
 .animal-toggle__btn:hover:not(.is-active){ background: rgba(26,36,25,.08); }
+.animal-toggle__btn:active{ opacity: .6; }
 
 .tab-chips{ display:flex; gap:.4rem; flex-wrap: wrap; }
 .chip{
@@ -234,6 +237,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 .chip--gold-std{ color: var(--gold-std-ink); }
 
 .chip:hover[aria-pressed="false"]{ background: rgba(26,36,25,.06); }
+.chip:active{ transform: scale(.95); }
 
 .chip--fatal[aria-pressed="true"]{ background: var(--fatal); border-color: var(--fatal); color:#fff; }
 .chip--toxic[aria-pressed="true"]{ background: var(--toxic); border-color: var(--toxic); color:#fff; }
@@ -261,6 +265,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   padding: .3rem 0;
   margin-top: 1.1rem;
 }
+.clear-btn:active{ opacity: .6; }
 
 .sidebar-backdrop{
   display:none;
@@ -305,7 +310,9 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   box-shadow: 0 10px 24px -14px rgba(0,0,0,.5);
   border: 1px solid rgba(0,0,0,.06);
   display:flex; flex-direction: column;
+  transition: transform .1s ease;
 }
+.card:active{ transform: scale(.985); }
 
 .card__favorite{
   position:absolute; top: .65rem; left: .65rem;
@@ -323,6 +330,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   padding: 0;
 }
 .card__favorite:hover{ transform: scale(1.1); border-color: var(--gold); }
+.card__favorite:active{ transform: scale(.88); }
 .card__favorite[aria-pressed="true"]{ color: var(--gold); border-color: var(--gold); background:#fff; }
 
 .card__stamp{
@@ -378,6 +386,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   color: var(--ink-soft); background:none; border:0; cursor:pointer;
   display:flex; align-items:center; gap:.35rem; padding: .2rem 0;
 }
+.card__expand:active{ opacity: .55; }
 .card__expand .chevron{ transition: transform .18s ease; font-size: .7rem; }
 .card__expand[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
 
@@ -529,6 +538,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
     line-height: 1;
     cursor: pointer;
   }
+  .sidebar-close:active{ transform: scale(.9); background: rgba(26,36,25,.08); }
 
   .sidebar-backdrop{
     display:block;
@@ -549,7 +559,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   .drawer{ grid-template-columns: 1fr; }
 
   /* Tap targets sized for touch without feeling oversized in a narrow panel */
-  .chip{ padding: .45rem .7rem; min-height: 34px; display:inline-flex; align-items:center; font-size: .68rem; }
+  .chip{ padding: .45rem .75rem; min-height: 34px; display:inline-flex; align-items:center; font-size: .72rem; }
   .animal-toggle__btn{ padding: .55rem .5rem; min-height: 36px; }
   .card__expand{ padding: .5rem 0; min-height: 40px; }
   .card__favorite{ width: 36px; height: 36px; font-size: 1.1rem; top: .6rem; left: .6rem; }
@@ -4648,6 +4658,24 @@ const PLANT_DATA = [
       cardEl.addEventListener("dblclick", (e) => {
         if (e.target.closest(".card__favorite")) return;
         toggleDetails();
+      });
+
+      // dblclick synthesis from touch isn't fully consistent across iOS
+      // Safari versions, so double-tap is also detected manually by timing
+      // consecutive touchend events — this is the reliable cross-version
+      // approach rather than depending solely on the browser's synthetic
+      // dblclick event.
+      let lastTap = 0;
+      cardEl.addEventListener("touchend", (e) => {
+        if (e.target.closest(".card__favorite")) return;
+        const now = Date.now();
+        if (now - lastTap < 350) {
+          e.preventDefault();
+          toggleDetails();
+          lastTap = 0;
+        } else {
+          lastTap = now;
+        }
       });
 
       frag.appendChild(node);
