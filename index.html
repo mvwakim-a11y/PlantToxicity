@@ -182,6 +182,8 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 
 .chip--tag{ color: var(--ink-soft); }
 .chip--tag[aria-pressed="true"]{ background: var(--ink-soft); border-color: var(--ink-soft); color:#fff; }
+.chip--favorite{ color: var(--toxic-ink); }
+.chip--favorite[aria-pressed="true"]{ background: var(--gold); border-color: var(--gold); color: var(--ink); }
 
 .chip-group{ display:flex; align-items:center; gap:.6rem; }
 .chip-group__label{
@@ -239,6 +241,24 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
   display:flex; flex-direction: column;
 }
 
+.card__favorite{
+  position:absolute; top: .65rem; left: .65rem;
+  width: 32px; height: 32px;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(255,255,255,.9);
+  border: 1.5px solid var(--parchment-dim);
+  border-radius: 50%;
+  cursor:pointer;
+  font-size: 1.05rem;
+  line-height:1;
+  color: var(--ink-soft);
+  transition: transform .12s ease, color .12s ease, border-color .12s ease;
+  z-index: 2;
+  padding: 0;
+}
+.card__favorite:hover{ transform: scale(1.1); border-color: var(--gold); }
+.card__favorite[aria-pressed="true"]{ color: var(--gold); border-color: var(--gold); background:#fff; }
+
 .card__stamp{
   position:absolute; top: .7rem; right: .7rem;
   font-family: var(--mono); font-weight: 700; font-size: .64rem;
@@ -257,7 +277,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 .card__stamp[data-status="SAFE"]{ color: var(--safe); border-color: var(--safe); }
 .card__stamp[data-status="UNVERIFIED"]{ color: var(--unverified); border-color: var(--unverified); border-style: dashed; }
 
-.card__top{ padding-right: 5.2rem; margin-bottom: .5rem; }
+.card__top{ padding-right: 5.2rem; padding-left: 2.5rem; margin-bottom: .5rem; }
 .card__name{
   font-family: var(--display); font-style: italic; font-weight: 600;
   font-size: 1.28rem; color: var(--ink); margin: 0 0 .15rem; line-height:1.15;
@@ -308,6 +328,8 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 .card__detail dd{ font-family: var(--sans); font-size: .82rem; margin:.12rem 0 0; color: var(--ink); }
 .f-tj-row{ display:none; }
 .f-tj-row.is-shown{ display:block; }
+.f-denver-row{ display:none; }
+.f-denver-row.is-shown{ display:block; }
 
 .card__animals{
   display:flex; gap: 1rem; margin-top: .8rem; padding-top: .7rem;
@@ -415,6 +437,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
           <button class="chip chip--tag" data-tag="SEASONAL" aria-pressed="false">Seasonal</button>
           <button class="chip chip--tag" data-tag="DRY-FRIENDLY" aria-pressed="false">Dry-friendly</button>
           <button class="chip chip--tag" data-tag="TJ" aria-pressed="false">At Trader Joe's</button>
+          <button class="chip chip--tag chip--favorite" data-tag="FAVORITE" aria-pressed="false">&#9733; Favorites</button>
         </div>
       </div>
 
@@ -443,6 +466,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
 
 <template id="card-template">
   <article class="card">
+    <button class="card__favorite" type="button" aria-pressed="false" aria-label="Add to favorites">&#9734;</button>
     <div class="card__stamp" aria-hidden="true"></div>
     <div class="card__top">
       <h2 class="card__name"></h2>
@@ -464,6 +488,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 1.25rem; }
         <div><dt>Est. wholesale</dt><dd class="f-wholesale"></dd></div>
         <div><dt>Est. retail</dt><dd class="f-retail"></dd></div>
         <div class="f-tj-row"><dt>Trader Joe's as</dt><dd class="f-tj"></dd></div>
+        <div class="f-denver-row"><dt>Denver notes</dt><dd class="f-denver"></dd></div>
       </dl>
       <div class="card__animals">
         <div><span class="chip-mini chip-mini--cat">Cat</span><span class="f-cat-status"></span></div>
@@ -484,7 +509,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 vomiting, depression",
+  "principle": "Saponins — vomiting, depression",
   "climate": "Cultivar, West/Central Africa origin",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -549,7 +574,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Insoluble calcium oxalates \u2014 oral swelling, drooling, difficulty swallowing",
+  "principle": "Insoluble calcium oxalates — oral swelling, drooling, difficulty swallowing",
   "climate": "Southeast Asia rainforest",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -561,7 +586,8 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
-  ]
+  ],
+  "denverNote": "High humidity is non-negotiable for this one in Denver's dry climate — without a humidifier or pebble tray, expect crisping leaf edges."
  },
  {
   "name": "Aloe Vera",
@@ -571,7 +597,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Toxic",
-  "principle": "Saponins \u2014 vomiting, diarrhea, lethargy",
+  "principle": "Saponins — vomiting, diarrhea, lethargy",
   "climate": "Arabian Peninsula (arid)",
   "zone": "9-11",
   "season": "Year-round",
@@ -584,17 +610,18 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — one of the more forgiving succulents to keep locally."
  },
  {
   "name": "Amaranthus / Love-Lies-Bleeding",
   "sci": "Amaranthus caudatus",
   "fam": "Amaranthaceae",
   "tj": "",
-  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
-  "principle": "Not confirmed either direction \u2014 popular trailing element in bouquets and installations",
+  "principle": "Not confirmed either direction — popular trailing element in bouquets and installations",
   "climate": "South America (Andes)",
   "zone": "2-11 (annual)",
   "season": "Peak summer-fall",
@@ -617,7 +644,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Lycorine, concentrated in bulb \u2014 vomiting, drooling, lethargy, tremors",
+  "principle": "Lycorine, concentrated in bulb — vomiting, drooling, lethargy, tremors",
   "climate": "South America",
   "zone": "8-10 (bulb, forced elsewhere)",
   "season": "Blooms Dec-Feb (forced for holidays)",
@@ -640,7 +667,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Protoanemonin (fresh sap) \u2014 oral irritation, blistering, drooling; dried/dead plant lower risk",
+  "principle": "Protoanemonin (fresh sap) — oral irritation, blistering, drooling; dried/dead plant lower risk",
   "climate": "Mediterranean",
   "zone": "7-10 (corm)",
   "season": "Peak winter-spring",
@@ -663,7 +690,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 oral irritation, drooling",
+  "principle": "Calcium oxalates — oral irritation, drooling",
   "climate": "Colombia/Ecuador rainforest",
   "zone": "11-12",
   "season": "Blooms year-round",
@@ -675,7 +702,8 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
-  ]
+  ],
+  "denverNote": "Benefits from supplemental humidity in Denver; less forgiving of dry indoor air than the base care note implies."
  },
  {
   "name": "Areca Palm",
@@ -706,7 +734,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Sapogenin \u2014 GI upset; berries cause dermatitis",
+  "principle": "Sapogenin — GI upset; berries cause dermatitis",
   "climate": "South Africa",
   "zone": "9-11",
   "season": "Year-round foliage",
@@ -726,8 +754,8 @@ const PLANT_DATA = [
   "sci": "Astilbe spp.",
   "fam": "Saxifragaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found",
   "climate": "East Asia/North America",
@@ -742,7 +770,8 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy on paper (zone 3-8), but needs part shade and consistent moisture that's harder to maintain in Denver's dry summer heat and wind than the zone map implies — plan on supplemental watering."
  },
  {
   "name": "Autumn Crocus",
@@ -752,14 +781,14 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "Toxic (severe)",
   "horse": "Toxic (severe)",
-  "principle": "Colchicine, concentrated in bulb \u2014 multi-organ failure, bone marrow suppression, death",
+  "principle": "Colchicine, concentrated in bulb — multi-organ failure, bone marrow suppression, death",
   "climate": "Europe/North Africa",
   "zone": "4-9 (bulb)",
   "season": "Blooms fall, foliage spring",
   "light": "Full sun to part shade",
   "water": "Bulb/garden plant, rarely cut",
   "dried": "No",
-  "wholesale": "n/a \u2014 rarely sold as cut flower",
+  "wholesale": "n/a — rarely sold as cut flower",
   "retail": "n/a",
   "tags": [
    "TOXIC-CAT",
@@ -776,12 +805,12 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "Toxic (severe)",
   "horse": "Toxic (severe)",
-  "principle": "Grayanotoxins, ALL parts \u2014 vomiting, cardiac arrhythmia, seizures, coma in large ingestions",
+  "principle": "Grayanotoxins, ALL parts — vomiting, cardiac arrhythmia, seizures, coma in large ingestions",
   "climate": "East Asia/Eastern North America",
   "zone": "5-9 (garden), forced as gift plant",
   "season": "Peak bloom spring; forced Jan-Apr as gift plant",
   "light": "Part shade",
-  "water": "Potted plant \u2014 keep soil consistently moist, acidic soil",
+  "water": "Potted plant — keep soil consistently moist, acidic soil",
   "dried": "No",
   "wholesale": "$8-15 (potted)",
   "retail": "$20-35 (potted)",
@@ -800,7 +829,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 mild GI upset",
+  "principle": "Saponins — mild GI upset",
   "climate": "Central/Eastern Europe",
   "zone": "3-9",
   "season": "Peak summer",
@@ -815,7 +844,8 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver and well-matched to alkaline, dry soil. Peak bloom Jun-Aug."
  },
  {
   "name": "Bells of Ireland",
@@ -825,7 +855,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Unknown",
-  "principle": "None known \u2014 confirmed on Cats Protection (UK) safe-plant list",
+  "principle": "None known — confirmed on Cats Protection (UK) safe-plant list",
   "climate": "Western Asia/Turkey/Syria",
   "zone": "9-11 (annual elsewhere)",
   "season": "Peak summer",
@@ -845,22 +875,23 @@ const PLANT_DATA = [
   "sci": "Betula spp.",
   "fam": "Betulaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found",
   "climate": "Northern Hemisphere temperate",
   "zone": "2-7",
   "season": "Year-round (bare branch/log decor)",
   "light": "Full sun",
-  "water": "Not typically kept in water \u2014 used as structural/decor element",
+  "water": "Not typically kept in water — used as structural/decor element",
   "dried": "Yes (used bare/dried by design)",
   "wholesale": "$5-15/branch",
   "retail": "$15-40/branch",
   "tags": [
    "UNVERIFIED",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "As a landscape tree, birch needs supplemental watering in Denver and is prone to stress (and borer susceptibility) in our dry, high-altitude conditions. Cut bare-branch decor is unaffected by this."
  },
  {
   "name": "Bird of Paradise",
@@ -870,7 +901,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Tannins/hydrocyanic compounds \u2014 mild GI upset, drowsiness",
+  "principle": "Tannins/hydrocyanic compounds — mild GI upset, drowsiness",
   "climate": "South Africa",
   "zone": "9-11",
   "season": "Blooms spring-summer",
@@ -905,7 +936,8 @@ const PLANT_DATA = [
   "retail": "$14-22",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Needs active humidity support in Denver — ambient household humidity here typically runs well below what this plant prefers."
  },
  {
   "name": "Blazing Star (Liatris)",
@@ -915,7 +947,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Unknown",
-  "principle": "None known \u2014 ASPCA lists it among confirmed non-toxic Mother's Day bouquet flowers",
+  "principle": "None known — ASPCA lists it among confirmed non-toxic Mother's Day bouquet flowers",
   "climate": "Eastern North America",
   "zone": "3-9 (corm)",
   "season": "Peak summer",
@@ -928,7 +960,8 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver; bloom tends to land Jul-Aug, slightly later than lowland zone timing due to elevation."
  },
  {
   "name": "Boston Fern",
@@ -949,7 +982,8 @@ const PLANT_DATA = [
   "retail": "$10-15",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Classically fussy about humidity — Denver's dry air (particularly once winter heating is running) will brown fronds without a humidifier or regular misting."
  },
  {
   "name": "Boxwood",
@@ -959,7 +993,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Steroidal alkaloids \u2014 vomiting, diarrhea, colic; large ingestion can affect heart/respiration",
+  "principle": "Steroidal alkaloids — vomiting, diarrhea, colic; large ingestion can affect heart/respiration",
   "climate": "Southern Europe/Western Asia/North Africa",
   "zone": "5-9",
   "season": "Year-round (cut greenery)",
@@ -972,7 +1006,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Marginal in Denver (zone 5b/6a, right at the edge of its 5-9 range) — broadleaf evergreens like this are prone to winter desiccation ('winter burn') here and need wind protection."
  },
  {
   "name": "Calathea (assorted)",
@@ -993,7 +1028,8 @@ const PLANT_DATA = [
   "retail": "$12-20",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Denver's low ambient humidity (often under 30%, lower once winter heating kicks in) will stress this plant more than the base care note implies — plan on a humidifier or pebble tray."
  },
  {
   "name": "Calla Lily",
@@ -1003,7 +1039,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 NOT a true lily; oral irritation, drooling (not kidney-related)",
+  "principle": "Calcium oxalates — NOT a true lily; oral irritation, drooling (not kidney-related)",
   "climate": "Southern Africa",
   "zone": "8-10",
   "season": "Peak spring-summer (cut); year-round import",
@@ -1026,7 +1062,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "principle": "None known — ASPCA-confirmed non-toxic (dedicated page verified directly)",
   "climate": "East Asia",
   "zone": "7-9",
   "season": "Peak winter-early spring",
@@ -1038,7 +1074,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Not garden-hardy in Denver (zone 7-9 vs. our 5b/6a) — greenhouse/import only, cannot be field-grown locally."
  },
  {
   "name": "Carnation",
@@ -1048,7 +1085,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Unknown compound \u2014 mild GI upset, dermatitis",
+  "principle": "Unknown compound — mild GI upset, dermatitis",
   "climate": "Mediterranean",
   "zone": "5-9",
   "season": "Year-round (greenhouse)",
@@ -1069,10 +1106,10 @@ const PLANT_DATA = [
   "sci": "Aspidistra elatior",
   "fam": "Asparagaceae",
   "tj": "",
-  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — appears in ASPCA's plant index but toxic/non-toxic status not confirmed from a dedicated source",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
-  "principle": "Not confirmed either direction \u2014 widely used for leaf-wrap and foliage design in weddings",
+  "principle": "Not confirmed either direction — widely used for leaf-wrap and foliage design in weddings",
   "climate": "Japan/Taiwan (understory)",
   "zone": "7-11",
   "season": "Year-round foliage",
@@ -1093,14 +1130,14 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "FATAL",
   "horse": "FATAL",
-  "principle": "Ricin, concentrated in seeds \u2014 GI hemorrhage, organ failure, death (small doses lethal)",
+  "principle": "Ricin, concentrated in seeds — GI hemorrhage, organ failure, death (small doses lethal)",
   "climate": "East Africa",
   "zone": "9-11 (grown as annual further north)",
   "season": "Foliage/seed pods summer-fall",
   "light": "Full sun",
   "water": "Ornamental foliage plant, not typically cut",
   "dried": "No",
-  "wholesale": "n/a \u2014 not typically sold as cut flower",
+  "wholesale": "n/a — not typically sold as cut flower",
   "retail": "n/a",
   "tags": [
    "TOXIC-CAT",
@@ -1116,7 +1153,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic across all cultivar pages (globosa, plumosa, spicata, cristata) verified directly",
+  "principle": "None known — ASPCA-confirmed non-toxic across all cultivar pages (globosa, plumosa, spicata, cristata) verified directly",
   "climate": "Tropical Asia/Africa (naturalized)",
   "zone": "10-11 (annual elsewhere)",
   "season": "Peak summer-fall",
@@ -1139,7 +1176,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 mild oral irritation",
+  "principle": "Calcium oxalates — mild oral irritation",
   "climate": "Tropical/subtropical Asia",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1159,8 +1196,8 @@ const PLANT_DATA = [
   "sci": "Pilea peperomioides",
   "fam": "Urticaceae",
   "tj": "Pilea",
-  "cat": "Unknown \u2014 a newer trade plant not confirmed on ASPCA's list",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — a newer trade plant not confirmed on ASPCA's list",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
   "principle": "Widely reputed pet-safe in the houseplant community, but no authoritative confirmation found",
   "climate": "Yunnan Province, China",
@@ -1205,7 +1242,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Pyrethrins/sesquiterpene lactones \u2014 GI upset, drooling, skin irritation",
+  "principle": "Pyrethrins/sesquiterpene lactones — GI upset, drooling, skin irritation",
   "climate": "East Asia",
   "zone": "5-9",
   "season": "Peak fall",
@@ -1220,15 +1257,16 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden mums often don't reliably overwinter in Denver's zone 5b despite being sold as perennial — best treated as an annual bedding plant locally. Peak bloom Sep-Oct."
  },
  {
   "name": "Cosmos",
   "sci": "Cosmos bipinnatus",
   "fam": "Asteraceae",
   "tj": "",
-  "cat": "Unknown \u2014 no dedicated ASPCA page found to confirm either way; an aggregator site claimed non-toxic but that could not be verified directly",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — no dedicated ASPCA page found to confirm either way; an aggregator site claimed non-toxic but that could not be verified directly",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
   "principle": "Not confirmed from a primary source",
   "climate": "Mexico",
@@ -1252,7 +1290,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Diterpenes in sap \u2014 vomiting, diarrhea, skin irritation",
+  "principle": "Diterpenes in sap — vomiting, diarrhea, skin irritation",
   "climate": "Southeast Asia/Pacific Islands",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1287,7 +1325,8 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver. Pussy willow catkins often appear Feb-Mar here rather than deep winter, timing varies with the last hard freeze."
  },
  {
   "name": "Cyclamen",
@@ -1297,7 +1336,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Terpenoid saponins, concentrated in tuber/roots \u2014 vomiting, diarrhea; large tuber ingestion can be severe",
+  "principle": "Terpenoid saponins, concentrated in tuber/roots — vomiting, diarrhea; large tuber ingestion can be severe",
   "climate": "Mediterranean/Middle East",
   "zone": "9-11 (grown as annual/gift plant elsewhere)",
   "season": "Blooms fall-spring (cool season)",
@@ -1319,7 +1358,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Lycorine, concentrated in bulb \u2014 vomiting, diarrhea, possible cardiac/GI collapse in large amounts",
+  "principle": "Lycorine, concentrated in bulb — vomiting, diarrhea, possible cardiac/GI collapse in large amounts",
   "climate": "Western Europe/Mediterranean",
   "zone": "3-8 (bulb)",
   "season": "Peak Mar-Apr",
@@ -1342,7 +1381,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Toxic (mild)",
-  "principle": "Unknown toxic principle (ASPCA-confirmed toxic) \u2014 mild gastrointestinal signs, mild dermatitis",
+  "principle": "Unknown toxic principle (ASPCA-confirmed toxic) — mild gastrointestinal signs, mild dermatitis",
   "climate": "Mexico/Central America",
   "zone": "8-11 (tuber, grown as annual further north)",
   "season": "Peak Jul-Oct",
@@ -1366,12 +1405,12 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "Non-toxic",
   "horse": "Unknown",
-  "principle": "Unknown nephrotoxin, ALL parts \u2014 acute kidney failure in cats within 24-72hrs",
+  "principle": "Unknown nephrotoxin, ALL parts — acute kidney failure in cats within 24-72hrs",
   "climate": "East Asia",
   "zone": "3-9",
   "season": "Peak Jun-Aug",
   "light": "Full sun to part shade",
-  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "water": "Cut stem, change water every 2 days — avoid entirely if cats present",
   "dried": "No",
   "wholesale": "$0.60-1.20/stem",
   "retail": "$3-5/stem",
@@ -1386,8 +1425,8 @@ const PLANT_DATA = [
   "sci": "Cornus spp.",
   "fam": "Cornaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found; widely assumed safe in gardening sources but not verified here",
   "climate": "Eastern North America",
@@ -1402,7 +1441,8 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Marginal as a landscape tree in Denver — flowering dogwood specifically struggles with our alkaline soil and dry winters. Cut branches for decor are unaffected."
  },
  {
   "name": "Dracaena (Draco/Marginata/Reflexa)",
@@ -1412,7 +1452,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 vomiting (sometimes bloody), depression, dilated pupils (cats)",
+  "principle": "Saponins — vomiting (sometimes bloody), depression, dilated pupils (cats)",
   "climate": "Africa/Madagascar/Asia (varies by species)",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1434,7 +1474,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Insoluble calcium oxalates \u2014 intense oral pain/swelling, drooling, vomiting",
+  "principle": "Insoluble calcium oxalates — intense oral pain/swelling, drooling, vomiting",
   "climate": "Caribbean/South America rainforest",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1456,7 +1496,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Pyrrolizidine alkaloids \u2014 chronic/large ingestion causes liver damage; single nibble usually only mild GI upset",
+  "principle": "Pyrrolizidine alkaloids — chronic/large ingestion causes liver damage; single nibble usually only mild GI upset",
   "climate": "Mediterranean",
   "zone": "7-10 (grown as annual further north)",
   "season": "Year-round foliage (bedding/cut greenery)",
@@ -1477,14 +1517,14 @@ const PLANT_DATA = [
   "fam": "Liliaceae",
   "tj": "",
   "cat": "FATAL",
-  "dog": "Toxic (mild \u2014 GI only)",
+  "dog": "Toxic (mild — GI only)",
   "horse": "Unknown",
-  "principle": "Unknown nephrotoxin, ALL parts incl. pollen/water \u2014 acute kidney failure in cats within 24-72hrs",
+  "principle": "Unknown nephrotoxin, ALL parts incl. pollen/water — acute kidney failure in cats within 24-72hrs",
   "climate": "Northern Hemisphere temperate",
   "zone": "4-9 (garden); year-round florist import",
   "season": "Peak Jun-Aug (garden); Easter season (potted)",
   "light": "Full sun to part shade",
-  "water": "Cut stem, remove pollen-heavy anthers if used near pets is not sufficient \u2014 avoid entirely",
+  "water": "Cut stem, remove pollen-heavy anthers if used near pets is not sufficient — avoid entirely",
   "dried": "No",
   "wholesale": "$1.50-3/stem",
   "retail": "$5-9/stem",
@@ -1513,7 +1553,8 @@ const PLANT_DATA = [
   "retail": "$6-10",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — needs less supplemental care here than in humid regions."
  },
  {
   "name": "Elephant Ear",
@@ -1523,7 +1564,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 oral irritation, swelling",
+  "principle": "Calcium oxalates — oral irritation, swelling",
   "climate": "Southeast Asia",
   "zone": "9-11 (grown as annual further north)",
   "season": "Foliage spring-fall",
@@ -1545,7 +1586,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Triterpenoid saponins \u2014 vomiting, diarrhea, drooling",
+  "principle": "Triterpenoid saponins — vomiting, diarrhea, drooling",
   "climate": "Europe/Western Asia",
   "zone": "4-9",
   "season": "Year-round foliage",
@@ -1568,7 +1609,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Essential oils (eucalyptol) \u2014 vomiting, diarrhea, drooling, weakness",
+  "principle": "Essential oils (eucalyptol) — vomiting, diarrhea, drooling, weakness",
   "climate": "Australia",
   "zone": "8-11 (grown as houseplant/cut greenery elsewhere)",
   "season": "Year-round (cut greenery)",
@@ -1591,7 +1632,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Ficin/sap \u2014 oral & skin irritation, GI upset",
+  "principle": "Ficin/sap — oral & skin irritation, GI upset",
   "climate": "Western Africa rainforest",
   "zone": "10-11",
   "season": "Year-round foliage",
@@ -1604,7 +1645,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Denver's high-altitude sun is more intense than 'bright indirect' typically implies at sea level — watch for leaf scorch near south/west-facing windows, especially in summer."
  },
  {
   "name": "Fittonia / Nerve Plant",
@@ -1625,7 +1667,8 @@ const PLANT_DATA = [
   "retail": "$7-10",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Especially prone to crispy leaf edges in Denver's dry indoor air without supplemental humidity — a humidifier or pebble tray is close to essential here."
  },
  {
   "name": "Flapjacks",
@@ -1635,7 +1678,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Cardiac glycosides \u2014 vomiting, diarrhea",
+  "principle": "Cardiac glycosides — vomiting, diarrhea",
   "climate": "South Africa (arid)",
   "zone": "9-11",
   "season": "Year-round, blooms spring",
@@ -1654,10 +1697,10 @@ const PLANT_DATA = [
   "sci": "Prunus spp.",
   "fam": "Rosaceae",
   "tj": "",
-  "cat": "Unknown \u2014 genuinely mixed evidence",
-  "dog": "Unknown \u2014 genuinely mixed evidence",
+  "cat": "Unknown — genuinely mixed evidence",
+  "dog": "Unknown — genuinely mixed evidence",
   "horse": "Unknown",
-  "principle": "Prunus as a genus carries a well-documented cyanogenic risk in pits and WILTED/damaged leaves; fresh ornamental blossom branches specifically are not confirmed toxic or safe \u2014 treat cautiously, especially as leaves wilt or drop",
+  "principle": "Prunus as a genus carries a well-documented cyanogenic risk in pits and WILTED/damaged leaves; fresh ornamental blossom branches specifically are not confirmed toxic or safe — treat cautiously, especially as leaves wilt or drop",
   "climate": "East Asia",
   "zone": "5-8",
   "season": "Peak Mar-Apr (short window)",
@@ -1676,8 +1719,8 @@ const PLANT_DATA = [
   "sci": "Forsythia x intermedia",
   "fam": "Oleaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found",
   "climate": "East Asia",
@@ -1691,7 +1734,8 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Often blooms in Apr rather than Mar in Denver, and flower buds can be damaged by our characteristic late hard freezes even after an early warm spell."
  },
  {
   "name": "Foxglove",
@@ -1701,12 +1745,12 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "FATAL",
   "horse": "Toxic (severe)",
-  "principle": "Cardiac glycosides (digoxin/digitoxin), ALL parts incl. vase water \u2014 arrhythmia, heart failure, death; onset can be under 1hr in cats",
+  "principle": "Cardiac glycosides (digoxin/digitoxin), ALL parts incl. vase water — arrhythmia, heart failure, death; onset can be under 1hr in cats",
   "climate": "Europe/Western Asia/Northwest Africa",
   "zone": "4-8 (biennial)",
   "season": "Peak Jun-Jul",
   "light": "Full sun to part shade",
-  "water": "Cut stem \u2014 ASPCA/vet sources specifically advise against using as a cut flower indoors with cats present",
+  "water": "Cut stem — ASPCA/vet sources specifically advise against using as a cut flower indoors with cats present",
   "dried": "No",
   "wholesale": "$1.50-3/stem",
   "retail": "$5-9/stem",
@@ -1715,7 +1759,8 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "FUCK NO",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy as a biennial in Denver, but benefits from winter mulch — zone 5b winters with thin snow cover can be harder on the crown than the zone number suggests. Peak bloom Jun-Jul."
  },
  {
   "name": "Freesia",
@@ -1769,7 +1814,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Colchicine-like alkaloids, concentrated in corm \u2014 oral irritation, drooling, GI upset, lethargy",
+  "principle": "Colchicine-like alkaloids, concentrated in corm — oral irritation, drooling, GI upset, lethargy",
   "climate": "Southern Africa",
   "zone": "7-10 (corm)",
   "season": "Peak summer",
@@ -1792,7 +1837,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Insoluble calcium oxalates \u2014 oral irritation, drooling, vomiting",
+  "principle": "Insoluble calcium oxalates — oral irritation, drooling, vomiting",
   "climate": "French Polynesia (Moorea)",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1811,8 +1856,8 @@ const PLANT_DATA = [
   "sci": "Solidago spp.",
   "fam": "Asteraceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found",
   "climate": "North America (native)",
@@ -1827,7 +1872,8 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy and thrives in Denver's dry conditions; peak bloom tends to run Aug-Sep, a bit later than the generic 'late summer-fall' window."
  },
  {
   "name": "Haworthia",
@@ -1848,7 +1894,8 @@ const PLANT_DATA = [
   "retail": "$6-10",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — thrives with minimal intervention here."
  },
  {
   "name": "Heartleaf Philodendron",
@@ -1858,7 +1905,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Insoluble calcium oxalates \u2014 oral irritation, swelling, vomiting",
+  "principle": "Insoluble calcium oxalates — oral irritation, swelling, vomiting",
   "climate": "Central America/Caribbean rainforest",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -1880,7 +1927,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "principle": "None known — ASPCA-confirmed non-toxic (dedicated page verified directly)",
   "climate": "Southwest/Central Asia",
   "zone": "3-8 (biennial)",
   "season": "Peak summer",
@@ -1892,7 +1939,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy biennial in Denver; benefits from a wind-sheltered spot given local exposure. Peak bloom Jul-Aug."
  },
  {
   "name": "Hosta (Plantain Lily)",
@@ -1902,7 +1950,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Saponins \u2014 vomiting, diarrhea, depression",
+  "principle": "Saponins — vomiting, diarrhea, depression",
   "climate": "East Asia",
   "zone": "3-9",
   "season": "Foliage spring-fall; blooms summer",
@@ -1915,7 +1963,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy, but needs part-to-full shade and consistent moisture — more watering-intensive in Denver's dry climate than the base care note implies."
  },
  {
   "name": "Hoya / Wax Plant",
@@ -1946,7 +1995,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Alkaloids, concentrated in bulb \u2014 severe GI upset, tremors if bulb eaten",
+  "principle": "Alkaloids, concentrated in bulb — severe GI upset, tremors if bulb eaten",
   "climate": "Eastern Mediterranean",
   "zone": "4-8 (bulb, forced elsewhere)",
   "season": "Peak Mar-Apr (forced Dec-Mar)",
@@ -1969,7 +2018,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Cyanogenic glycosides \u2014 vomiting, diarrhea, lethargy",
+  "principle": "Cyanogenic glycosides — vomiting, diarrhea, lethargy",
   "climate": "Japan/East Asia",
   "zone": "3-9",
   "season": "Peak Jun-Sep",
@@ -1984,7 +2033,8 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Hydrangea macrophylla (mophead) commonly loses flower buds to Denver's late spring frosts since it blooms on old wood — panicle-type hydrangeas (H. paniculata) are a more reliable local choice."
  },
  {
   "name": "Iris (Bearded/Flag)",
@@ -1994,7 +2044,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Pentacyclic terpenoids (zeorin, missourin, missouriensin), concentrated in rhizome \u2014 salivation, vomiting, drooling, lethargy, diarrhea",
+  "principle": "Pentacyclic terpenoids (zeorin, missourin, missouriensin), concentrated in rhizome — salivation, vomiting, drooling, lethargy, diarrhea",
   "climate": "Northern Hemisphere temperate",
   "zone": "3-9 (rhizome)",
   "season": "Peak spring",
@@ -2007,7 +2057,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy and extremely well-suited to Denver's dry, sunny conditions once established. Peak bloom tends to land May-Jun, a bit later than lowland zone timing."
  },
  {
   "name": "Jade Plant",
@@ -2017,7 +2068,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Unknown compound \u2014 vomiting, incoordination, low heart rate",
+  "principle": "Unknown compound — vomiting, incoordination, low heart rate",
   "climate": "South Africa/Mozambique (arid)",
   "zone": "10-11",
   "season": "Year-round, may bloom winter",
@@ -2030,7 +2081,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — one of the easier houseplants to keep locally."
  },
  {
   "name": "Larkspur / Delphinium",
@@ -2040,12 +2092,12 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "FATAL",
   "horse": "Toxic (severe)",
-  "principle": "Diterpenoid alkaloids, ALL parts (seeds/new growth most concentrated) \u2014 neuromuscular paralysis, cardiac arrhythmia, respiratory failure, death",
+  "principle": "Diterpenoid alkaloids, ALL parts (seeds/new growth most concentrated) — neuromuscular paralysis, cardiac arrhythmia, respiratory failure, death",
   "climate": "Northern Hemisphere temperate",
   "zone": "3-7 (perennial)/annual (Consolida/annual larkspur)",
   "season": "Peak Jun-Aug",
   "light": "Full sun",
-  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "water": "Cut stem, change water every 2 days — avoid entirely if cats present",
   "dried": "No",
   "wholesale": "$1-2/stem",
   "retail": "$4-7/stem",
@@ -2054,7 +2106,8 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "FUCK NO",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver (perennial types); benefits from staking given wind exposure at altitude. Peak bloom tends to run Jun-Jul here."
  },
  {
   "name": "Lavender",
@@ -2064,7 +2117,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Linalool/linalyl acetate \u2014 vomiting, GI upset in large amounts; low risk from casual sniffing",
+  "principle": "Linalool/linalyl acetate — vomiting, GI upset in large amounts; low risk from casual sniffing",
   "climate": "Mediterranean",
   "zone": "5-9",
   "season": "Peak summer",
@@ -2079,15 +2132,16 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Actually well-suited to Denver despite the borderline zone rating — dry soil and alkaline pH match its native Mediterranean preferences. Peak bloom Jun-Jul."
  },
  {
   "name": "Leatherleaf Fern",
   "sci": "Rumohra adiantiformis",
   "fam": "Dryopteridaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed (Boston/sword fern are confirmed safe, but this is a different genus)",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — not ASPCA-listed (Boston/sword fern are confirmed safe, but this is a different genus)",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
   "principle": "Ferns as a class are usually low-risk, but this specific genus lacks a confirmed source",
   "climate": "Southern Hemisphere subtropics",
@@ -2111,12 +2165,12 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "Toxic (severe)",
   "horse": "Toxic",
-  "principle": "Cardiac glycosides, ALL parts \u2014 arrhythmia, vomiting, seizures, can be fatal",
+  "principle": "Cardiac glycosides, ALL parts — arrhythmia, vomiting, seizures, can be fatal",
   "climate": "Northern Hemisphere temperate woodlands",
   "zone": "3-8",
   "season": "Peak spring (Apr-May)",
   "light": "Part to full shade",
-  "water": "Cut stem, change water every 2 days \u2014 avoid entirely if cats present",
+  "water": "Cut stem, change water every 2 days — avoid entirely if cats present",
   "dried": "No",
   "wholesale": "$2-4/stem",
   "retail": "$8-15/stem",
@@ -2125,7 +2179,8 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "FUCK NO",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver; bloom typically lands in May rather than Apr, and part-to-full shade is important given how intense high-altitude sun gets."
  },
  {
   "name": "Lisianthus",
@@ -2157,7 +2212,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 mild GI upset",
+  "principle": "Saponins — mild GI upset",
   "climate": "Cameroon (Central Africa)",
   "zone": "10-11",
   "season": "Year-round foliage",
@@ -2192,7 +2247,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Not reliably garden-hardy in Denver — M. grandiflora is rated zone 6-10 and is uncommon in local landscapes; source as cut greenery/import."
  },
  {
   "name": "Mint",
@@ -2202,7 +2258,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Essential oils \u2014 vomiting and diarrhea with large ingestions. ASPCA-confirmed toxic (dedicated page verified directly \u2014 corrects an earlier version of this database that had mint listed as safe)",
+  "principle": "Essential oils — vomiting and diarrhea with large ingestions. ASPCA-confirmed toxic (dedicated page verified directly — corrects an earlier version of this database that had mint listed as safe)",
   "climate": "Europe/Asia (widely naturalized)",
   "zone": "3-11",
   "season": "Year-round (fresh herb)",
@@ -2246,14 +2302,14 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "FATAL",
   "horse": "FATAL",
-  "principle": "Cardiac glycosides, ALL parts \u2014 arrhythmia, vomiting, tremors, death; also toxic dried",
+  "principle": "Cardiac glycosides, ALL parts — arrhythmia, vomiting, tremors, death; also toxic dried",
   "climate": "Mediterranean/Asia",
   "zone": "8-11",
   "season": "Peak summer bloom (garden/landscape shrub)",
   "light": "Full sun",
-  "water": "Cut stem if used decoratively \u2014 avoid entirely if pets present",
+  "water": "Cut stem if used decoratively — avoid entirely if pets present",
   "dried": "No (remains toxic even dried)",
-  "wholesale": "n/a \u2014 not typically sold as cut flower",
+  "wholesale": "n/a — not typically sold as cut flower",
   "retail": "n/a",
   "tags": [
    "TOXIC-CAT",
@@ -2281,7 +2337,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Not garden-hardy in Denver (zone 8-11) — the Mediterranean climate mismatch goes beyond cold hardiness; source as cut greenery only."
  },
  {
   "name": "Orchid (Phalaenopsis)",
@@ -2309,15 +2366,15 @@ const PLANT_DATA = [
   "sci": "Cortaderia selloana",
   "fam": "Poaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed systemic toxin found; plumes are sharp/fibrous and can cause mechanical mouth injury regardless of toxicity",
   "climate": "South America",
   "zone": "7-10 (landscape); grown widely for dried plume trade",
   "season": "Peak fall (plumes)",
   "light": "Full sun",
-  "water": "Not applicable \u2014 used dried",
+  "water": "Not applicable — used dried",
   "dried": "Yes (industry-standard dried element)",
   "wholesale": "$3-8/stem",
   "retail": "$10-25/stem",
@@ -2334,7 +2391,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Cardiac glycosides \u2014 vomiting, diarrhea; rare severe cardiac effects in large amounts",
+  "principle": "Cardiac glycosides — vomiting, diarrhea; rare severe cardiac effects in large amounts",
   "climate": "Madagascar (arid)",
   "zone": "9-11",
   "season": "Year-round",
@@ -2346,7 +2403,8 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — low-fuss here compared to humid regions."
  },
  {
   "name": "Parlor Palm",
@@ -2377,7 +2435,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Insoluble calcium oxalates \u2014 NOT a true lily; oral irritation, not kidney-related",
+  "principle": "Insoluble calcium oxalates — NOT a true lily; oral irritation, not kidney-related",
   "climate": "Tropical Americas",
   "zone": "11-12",
   "season": "Blooms spring-fall",
@@ -2399,7 +2457,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Paeonol (bark most concentrated) \u2014 vomiting, diarrhea, lethargy",
+  "principle": "Paeonol (bark most concentrated) — vomiting, diarrhea, lethargy",
   "climate": "Central/East Asia",
   "zone": "3-8",
   "season": "Peak May-Jun (short season)",
@@ -2413,7 +2471,8 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy in Denver (zone 5b/6a). Peak bloom typically shifts to late May-June here, sometimes into early July, rather than the generic May-Jun window."
  },
  {
   "name": "Peperomia (assorted)",
@@ -2486,8 +2545,8 @@ const PLANT_DATA = [
   "sci": "Pittosporum tobira",
   "fam": "Pittosporaceae",
   "tj": "",
-  "cat": "Unknown \u2014 conflicting sources (not on ASPCA's dedicated toxic pages; one UK charity lists it safe)",
-  "dog": "Unknown \u2014 same conflict",
+  "cat": "Unknown — conflicting sources (not on ASPCA's dedicated toxic pages; one UK charity lists it safe)",
+  "dog": "Unknown — same conflict",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found; treat as unverified rather than trusting either source",
   "climate": "Japan/China (coastal)",
@@ -2500,7 +2559,8 @@ const PLANT_DATA = [
   "retail": "$4-6/stem",
   "tags": [
    "UNVERIFIED"
-  ]
+  ],
+  "denverNote": "Not garden-hardy in Denver (zone 8-11) — import/greenhouse only."
  },
  {
   "name": "Poinsettia",
@@ -2510,7 +2570,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Diterpenoid esters in sap \u2014 mild GI upset, oral irritation (toxicity often overstated)",
+  "principle": "Diterpenoid esters in sap — mild GI upset, oral irritation (toxicity often overstated)",
   "climate": "Mexico/Central America",
   "zone": "9-11",
   "season": "Bract color Nov-Jan (holiday)",
@@ -2545,7 +2605,8 @@ const PLANT_DATA = [
   "retail": "$15-25",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — genuinely low-maintenance locally."
  },
  {
   "name": "Prayer Plant",
@@ -2566,15 +2627,16 @@ const PLANT_DATA = [
   "retail": "$10-16",
   "tags": [
    "SAFE"
-  ]
+  ],
+  "denverNote": "Denver's dry indoor air (especially in winter) will stress this plant beyond what 'keep consistently moist' suggests — supplemental humidity recommended."
  },
  {
   "name": "Protea",
   "sci": "Protea spp.",
   "fam": "Proteaceae",
   "tj": "Protea",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "Not formally documented",
   "climate": "South Africa",
@@ -2596,8 +2658,8 @@ const PLANT_DATA = [
   "sci": "Daucus carota",
   "fam": "Apiaceae",
   "tj": "",
-  "cat": "Unknown \u2014 appears in ASPCA's plant index but toxic/non-toxic status not confirmed from available sources",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — appears in ASPCA's plant index but toxic/non-toxic status not confirmed from available sources",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
   "principle": "Sap contains furanocoumarins (documented human contact-dermatitis risk); systemic pet toxicity not confirmed either way",
   "climate": "Europe/Southwest Asia (naturalized in North America)",
@@ -2622,7 +2684,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Toxic",
-  "principle": "Ranunculin/protoanemonin (fresh sap) \u2014 oral irritation, blistering; dried/dead plant safer",
+  "principle": "Ranunculin/protoanemonin (fresh sap) — oral irritation, blistering; dried/dead plant safer",
   "climate": "Mediterranean/Southwest Asia",
   "zone": "8-10 (corm)",
   "season": "Peak Feb-May",
@@ -2659,7 +2721,8 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Generally reliable in Denver with winter protection (mounding) for hybrid teas; shrub roses are lower-maintenance locally."
  },
  {
   "name": "Rubber Plant",
@@ -2669,7 +2732,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Sap \u2014 irritant, GI upset",
+  "principle": "Sap — irritant, GI upset",
   "climate": "Northeast India/Indonesia",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -2682,17 +2745,18 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Denver's intense high-altitude light can scorch this plant faster than the base care note implies near unfiltered south/west windows."
  },
  {
   "name": "Ruscus (Israeli Ruscus)",
   "sci": "Ruscus spp.",
   "fam": "Asparagaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed; family (Asparagaceae) suggests possible mild saponin irritation",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed; family (Asparagaceae) suggests possible mild saponin irritation",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
-  "principle": "Not formally documented \u2014 treat with caution pending verification given family",
+  "principle": "Not formally documented — treat with caution pending verification given family",
   "climate": "Mediterranean/Western Asia",
   "zone": "7-9",
   "season": "Year-round (cut greenery)",
@@ -2714,7 +2778,7 @@ const PLANT_DATA = [
   "cat": "FATAL",
   "dog": "FATAL",
   "horse": "Unknown",
-  "principle": "Cycasin, ALL parts (seeds most concentrated) \u2014 liver failure, seizures, death",
+  "principle": "Cycasin, ALL parts (seeds most concentrated) — liver failure, seizures, death",
   "climate": "Southern Japan",
   "zone": "8-10 (houseplant elsewhere)",
   "season": "Year-round foliage",
@@ -2734,10 +2798,10 @@ const PLANT_DATA = [
   "sci": "Gaultheria shallon",
   "fam": "Ericaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
-  "principle": "Not formally documented \u2014 Ericaceae family includes some toxic genera (azalea); treat cautiously",
+  "principle": "Not formally documented — Ericaceae family includes some toxic genera (azalea); treat cautiously",
   "climate": "Pacific Northwest North America",
   "zone": "6-8",
   "season": "Year-round (cut greenery)",
@@ -2749,7 +2813,8 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Poor climate match for Denver regardless of zone rating — native to moist Pacific Northwest understory and will struggle with our dryness even as a houseplant experiment; source as cut greenery."
  },
  {
   "name": "Schefflera / Umbrella Tree",
@@ -2759,7 +2824,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 oral irritation, vomiting",
+  "principle": "Calcium oxalates — oral irritation, vomiting",
   "climate": "Taiwan",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -2778,8 +2843,8 @@ const PLANT_DATA = [
   "sci": "Eryngium spp.",
   "fam": "Apiaceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "Not formally documented; spiny bracts pose a mechanical-injury risk regardless of toxicity",
   "climate": "Europe/Mediterranean",
@@ -2794,17 +2859,18 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Drought-tolerant and well-matched to Denver's dry climate despite the borderline zone rating."
  },
  {
   "name": "Smilax (florist vine)",
   "sci": "Smilax spp.",
   "fam": "Smilacaceae",
   "tj": "",
-  "cat": "Unknown \u2014 appears in ASPCA's plant index alongside both toxic and non-toxic entries; this genus's status not confirmed from a dedicated source",
-  "dog": "Unknown \u2014 same gap",
+  "cat": "Unknown — appears in ASPCA's plant index alongside both toxic and non-toxic entries; this genus's status not confirmed from a dedicated source",
+  "dog": "Unknown — same gap",
   "horse": "Unknown",
-  "principle": "Not confirmed either direction \u2014 common wedding arch/garland vine, verify before using near cats",
+  "principle": "Not confirmed either direction — common wedding arch/garland vine, verify before using near cats",
   "climate": "Southeastern US",
   "zone": "7-10",
   "season": "Year-round (cut greenery/vine)",
@@ -2825,7 +2891,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 GI upset, drooling",
+  "principle": "Saponins — GI upset, drooling",
   "climate": "West Africa (arid)",
   "zone": "9-11",
   "season": "Year-round foliage",
@@ -2838,7 +2904,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate — very low-maintenance here."
  },
  {
   "name": "Snapdragon",
@@ -2914,7 +2981,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly); literally called 'Bride's Flower' in ASPCA's own materials",
+  "principle": "None known — ASPCA-confirmed non-toxic (dedicated page verified directly); literally called 'Bride's Flower' in ASPCA's own materials",
   "climate": "Madagascar",
   "zone": "10-11 (grown as vine/houseplant elsewhere)",
   "season": "Year-round import; blooms summer",
@@ -2957,7 +3024,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Sap/pyrrolizidine-related compounds \u2014 vomiting, drooling, skin irritation",
+  "principle": "Sap/pyrrolizidine-related compounds — vomiting, drooling, skin irritation",
   "climate": "Southwest Africa (arid)",
   "zone": "9-11",
   "season": "Year-round, blooms fall",
@@ -2970,7 +3037,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Well-suited to Denver's dry climate, though still benefits from bright light to avoid stretching at altitude."
  },
  {
   "name": "Sunflower",
@@ -3003,7 +3071,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild-moderate)",
   "dog": "Toxic (mild-moderate)",
   "horse": "Toxic",
-  "principle": "Aminopropionitrile (seeds most concentrated) \u2014 lethargy, incoordination, tremors with repeated/large ingestion",
+  "principle": "Aminopropionitrile (seeds most concentrated) — lethargy, incoordination, tremors with repeated/large ingestion",
   "climate": "Sicily/Southern Italy",
   "zone": "2-11 (annual)",
   "season": "Peak spring",
@@ -3027,7 +3095,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "principle": "None known — ASPCA-confirmed non-toxic (dedicated page verified directly)",
   "climate": "Mediterranean",
   "zone": "5-9",
   "season": "Year-round (fresh herb)",
@@ -3039,7 +3107,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Thrives in Denver's dry, alkaline soil despite the borderline zone rating — one of the more foolproof herbs for local gardens."
  },
  {
   "name": "Ti Plant / Cordyline",
@@ -3049,7 +3118,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Saponins \u2014 vomiting (occasionally bloody), depression, drooling, dilated pupils (cats). ASPCA-confirmed via dedicated toxicity page",
+  "principle": "Saponins — vomiting (occasionally bloody), depression, drooling, dilated pupils (cats). ASPCA-confirmed via dedicated toxicity page",
   "climate": "Southeast Asia/Pacific Islands",
   "zone": "10-12",
   "season": "Year-round (cut foliage popular for leis, wraps, arches)",
@@ -3071,7 +3140,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Unknown",
-  "principle": "Tulipalin A/B, concentrated in bulb \u2014 oral irritation, drooling, GI upset",
+  "principle": "Tulipalin A/B, concentrated in bulb — oral irritation, drooling, GI upset",
   "climate": "Central Asia",
   "zone": "3-8 (bulb, forced elsewhere)",
   "season": "Peak Mar-May",
@@ -3091,8 +3160,8 @@ const PLANT_DATA = [
   "sci": "Dionaea muscipula",
   "fam": "Droseraceae",
   "tj": "",
-  "cat": "Unknown \u2014 not ASPCA-listed",
-  "dog": "Unknown \u2014 not ASPCA-listed",
+  "cat": "Unknown — not ASPCA-listed",
+  "dog": "Unknown — not ASPCA-listed",
   "horse": "Unknown",
   "principle": "No confirmed toxic principle found",
   "climate": "NC/SC coastal bogs",
@@ -3127,7 +3196,8 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Garden-hardy and a reliable performer in Denver's dry conditions. Peak bloom Jun-Aug."
  },
  {
   "name": "Wax Flower",
@@ -3160,7 +3230,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Toxic",
-  "principle": "Sap/ficin \u2014 irritant, GI upset",
+  "principle": "Sap/ficin — irritant, GI upset",
   "climate": "South/Southeast Asia, Australia",
   "zone": "10-12",
   "season": "Year-round foliage",
@@ -3173,7 +3243,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
-  ]
+  ],
+  "denverNote": "Sensitive to both light intensity and being moved — Denver's strong high-altitude sun through south/west windows can scorch leaves faster than expected, on top of this plant's usual fussiness about relocation."
  },
  {
   "name": "Wisteria",
@@ -3183,7 +3254,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Lectin, wisterin glycoside \u2014 vomiting (sometimes with blood), diarrhea, depression",
+  "principle": "Lectin, wisterin glycoside — vomiting (sometimes with blood), diarrhea, depression",
   "climate": "East Asia/Eastern US",
   "zone": "5-9",
   "season": "Peak Apr-May (cascading bloom)",
@@ -3196,7 +3267,8 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
-  ]
+  ],
+  "denverNote": "Flower buds are frost-vulnerable and often damaged by Denver's late spring freezes — the vine survives winters fine, but bloom is inconsistent year to year here."
  },
  {
   "name": "Yarrow",
@@ -3206,7 +3278,7 @@ const PLANT_DATA = [
   "cat": "Toxic",
   "dog": "Toxic",
   "horse": "Toxic",
-  "principle": "Achillein (glycoalkaloid), monoterpenes, achillin \u2014 vomiting, diarrhea, colic, drooling, dermatitis",
+  "principle": "Achillein (glycoalkaloid), monoterpenes, achillin — vomiting, diarrhea, colic, drooling, dermatitis",
   "climate": "Europe/Western Asia (naturalized worldwide)",
   "zone": "3-9",
   "season": "Peak summer",
@@ -3220,7 +3292,8 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "SEASONAL",
    "DRY-FRIENDLY"
-  ]
+  ],
+  "denverNote": "Garden-hardy and genuinely well-suited to Denver's dry, high-altitude summer sun and alkaline soil; low-fuss once established. Peak bloom Jun-Aug."
  },
  {
   "name": "ZZ Plant",
@@ -3230,7 +3303,7 @@ const PLANT_DATA = [
   "cat": "Toxic (mild)",
   "dog": "Toxic (mild)",
   "horse": "Unknown",
-  "principle": "Calcium oxalates \u2014 oral irritation, GI upset",
+  "principle": "Calcium oxalates — oral irritation, GI upset",
   "climate": "Eastern Africa (drought-prone)",
   "zone": "9-11",
   "season": "Year-round foliage",
@@ -3253,7 +3326,7 @@ const PLANT_DATA = [
   "cat": "Non-toxic",
   "dog": "Non-toxic",
   "horse": "Non-toxic",
-  "principle": "None known \u2014 ASPCA-confirmed non-toxic (dedicated page verified directly)",
+  "principle": "None known — ASPCA-confirmed non-toxic (dedicated page verified directly)",
   "climate": "Mexico",
   "zone": "3-10 (annual)",
   "season": "Peak summer-fall",
@@ -3276,9 +3349,46 @@ const PLANT_DATA = [
     animal: "cat",
     search: "",
     statuses: new Set(),   // FATAL | TOXIC | SAFE | UNVERIFIED
-    tags: new Set(),       // SEASONAL | DRY-FRIENDLY | TJ
+    tags: new Set(),       // SEASONAL | DRY-FRIENDLY | TJ | FAVORITE
     plants: [],
+    favorites: new Set(),  // plant names the user has starred
   };
+
+  const FAVORITES_KEY = "favorites";
+
+  async function loadFavorites() {
+    try {
+      const result = await window.storage.get(FAVORITES_KEY, false);
+      if (result && result.value) {
+        state.favorites = new Set(JSON.parse(result.value));
+      }
+    } catch (err) {
+      // Key doesn't exist yet on first run — start with an empty set.
+      state.favorites = new Set();
+    }
+  }
+
+  async function saveFavorites() {
+    try {
+      await window.storage.set(
+        FAVORITES_KEY,
+        JSON.stringify(Array.from(state.favorites)),
+        false
+      );
+    } catch (err) {
+      console.error("Could not save favorites", err);
+    }
+  }
+
+  function toggleFavorite(name) {
+    if (state.favorites.has(name)) {
+      state.favorites.delete(name);
+    } else {
+      state.favorites.add(name);
+    }
+    saveFavorites();
+    render();
+  }
 
   const drawerEl = document.getElementById("drawer");
   const resultCountEl = document.getElementById("result-count");
@@ -3305,15 +3415,18 @@ const PLANT_DATA = [
   };
 
   // -------- load embedded data (no fetch, no separate file, no path to break) --------
-  try {
-    state.plants = PLANT_DATA;
-    specimenCountEl.textContent = PLANT_DATA.length;
-    render();
-  } catch (err) {
-    drawerEl.innerHTML =
-      '<p style="color:#F1EAD9;font-family:sans-serif;padding:2rem;">Could not read the embedded plant data.</p>';
-    console.error(err);
-  }
+  (async function init() {
+    try {
+      state.plants = PLANT_DATA;
+      specimenCountEl.textContent = PLANT_DATA.length;
+      await loadFavorites();
+      render();
+    } catch (err) {
+      drawerEl.innerHTML =
+        '<p style="color:#F1EAD9;font-family:sans-serif;padding:2rem;">Could not read the embedded plant data.</p>';
+      console.error(err);
+    }
+  })();
 
   // -------- wire up controls --------
   document.getElementById("search").addEventListener("input", (e) => {
@@ -3387,10 +3500,12 @@ const PLANT_DATA = [
       const hasSeasonal = plant.tags.includes("SEASONAL");
       const hasDry = plant.tags.includes("DRY-FRIENDLY");
       const hasTJ = !!plant.tj;
+      const hasFavorite = state.favorites.has(plant.name);
       const anyMatch =
         (state.tags.has("SEASONAL") && hasSeasonal) ||
         (state.tags.has("DRY-FRIENDLY") && hasDry) ||
-        (state.tags.has("TJ") && hasTJ);
+        (state.tags.has("TJ") && hasTJ) ||
+        (state.tags.has("FAVORITE") && hasFavorite);
       if (!anyMatch) return false;
     }
 
@@ -3418,6 +3533,16 @@ const PLANT_DATA = [
       const node = cardTemplate.content.cloneNode(true);
       const status = classify(plant[state.animal]);
 
+      const favBtn = node.querySelector(".card__favorite");
+      const isFav = state.favorites.has(plant.name);
+      favBtn.setAttribute("aria-pressed", String(isFav));
+      favBtn.setAttribute(
+        "aria-label",
+        isFav ? `Remove ${plant.name} from favorites` : `Add ${plant.name} to favorites`
+      );
+      favBtn.textContent = isFav ? "\u2605" : "\u2606";
+      favBtn.addEventListener("click", () => toggleFavorite(plant.name));
+
       const stampEl = node.querySelector(".card__stamp");
       stampEl.dataset.status = status;
       stampEl.textContent = STATUS_LABEL[status];
@@ -3441,6 +3566,12 @@ const PLANT_DATA = [
       if (plant.tj) {
         tjRow.classList.add("is-shown");
         node.querySelector(".f-tj").textContent = plant.tj;
+      }
+
+      const denverRow = node.querySelector(".f-denver-row");
+      if (plant.denverNote) {
+        denverRow.classList.add("is-shown");
+        node.querySelector(".f-denver").textContent = plant.denverNote;
       }
 
       node.querySelector(".f-cat-status").textContent = plant.cat;
