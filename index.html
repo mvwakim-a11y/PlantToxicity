@@ -42,6 +42,8 @@
   --unverified-ink: #56514A;
   --mild:           #B08D2A;
   --mild-ink:       #8C6F1F;
+  --gold-std:       #7C5CAE;
+  --gold-std-ink:   #5F4585;
 
   --display: 'Cormorant Garamond', Georgia, serif;
   --caps:    'Cormorant SC', 'Cormorant Garamond', Georgia, serif;
@@ -136,41 +138,52 @@ body{
    ============================================================ */
 main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-area-inset-right)) 0 max(1.25rem, env(safe-area-inset-left)); }
 
-.control-panel{
-  background: var(--parchment);
+/* ============================================================
+   APP SHELL: collapsible left sidebar + content
+   ============================================================ */
+.app-shell{
+  display:flex; align-items:flex-start; gap: 1.25rem;
   margin-top: -1.75rem;
+}
+
+.sidebar{
+  background: var(--parchment);
   border-radius: var(--radius);
   box-shadow: 0 18px 40px -18px rgba(0,0,0,.55);
-  padding: 1.1rem 1.25rem 1rem;
+  padding: 1.1rem 1.15rem;
+  width: 260px;
+  flex-shrink: 0;
   position: sticky;
   top: max(0.75rem, env(safe-area-inset-top));
   z-index: 20;
+  overflow: hidden;
+  transition: width .22s ease, padding .22s ease, opacity .15s ease;
 }
-.control-panel__row{
-  display:flex; gap: .75rem; align-items:center; flex-wrap: wrap;
+.sidebar.is-collapsed{
+  width: 0; padding-left: 0; padding-right: 0; opacity: 0; pointer-events: none;
 }
-.control-panel__row + .control-panel__row{ margin-top: .75rem; }
-.control-panel__toggle{
-  display:flex; align-items:center; gap:.3rem;
-  font-family: var(--mono); font-size: .68rem; letter-spacing:.05em; text-transform:uppercase;
-  padding: .45rem .7rem;
-  border: 1.4px solid var(--ink);
+.sidebar__inner{ width: 232px; } /* fixed inner width so content doesn't reflow/wrap during the collapse transition */
+
+.sidebar-toggle{
+  display:flex; align-items:center; justify-content:center;
+  width: 38px; height: 38px;
+  border: 1.5px solid var(--gold);
   border-radius: var(--radius);
   background: transparent;
-  color: var(--ink);
+  color: var(--gold);
   cursor:pointer;
-  flex-shrink:0;
-  margin-left: .5rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-bottom: .9rem;
+  position: sticky;
+  top: max(0.75rem, env(safe-area-inset-top));
+  z-index: 21;
 }
-.control-panel__toggle:hover{ background: rgba(26,36,25,.08); }
-.control-panel__toggle .chevron{ transition: transform .18s ease; font-size: .7rem; display:inline-block; }
-.control-panel__toggle[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
-.control-panel--collapsed .control-panel__row--tags{ display:none; }
+.sidebar-toggle:hover{ background: rgba(201,162,39,.1); }
 
-.control-panel__row--tags{ row-gap: .6rem; }
+.sidebar__section + .sidebar__section{ margin-top: 1.1rem; padding-top: 1rem; border-top: 1px dashed var(--parchment-dim); }
 
 .search-slip{
-  flex: 1 1 260px;
   display:flex; align-items:center; gap:.55rem;
   background: #fff;
   border: 1.5px solid var(--parchment-dim);
@@ -186,21 +199,27 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 }
 .search-slip input::placeholder{ color: #9a9184; }
 
+.animal-toggle-wrap{ display:flex; flex-direction:column; gap:.4rem; }
+.animal-toggle-wrap__label{
+  font-family: var(--mono); font-size: .62rem; letter-spacing:.09em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
 .animal-toggle{ display:flex; border: 1.5px solid var(--ink); border-radius: var(--radius); overflow:hidden; }
 .animal-toggle__btn{
+  flex: 1;
   font-family: var(--mono); font-size: .74rem; letter-spacing:.05em; text-transform:uppercase;
   border:0; background: transparent; color: var(--ink);
-  padding: .55rem .85rem; cursor:pointer;
+  padding: .55rem .5rem; cursor:pointer;
   border-left: 1.5px solid var(--ink);
 }
 .animal-toggle__btn:first-child{ border-left:0; }
 .animal-toggle__btn.is-active{ background: var(--ink); color: var(--parchment); }
 .animal-toggle__btn:hover:not(.is-active){ background: rgba(26,36,25,.08); }
 
-.tab-chips{ display:flex; gap:.45rem; flex-wrap: wrap; }
+.tab-chips{ display:flex; gap:.4rem; flex-wrap: wrap; }
 .chip{
-  font-family: var(--mono); font-size: .72rem; letter-spacing:.04em; text-transform: uppercase;
-  padding: .4rem .7rem; border-radius: 999px; cursor:pointer;
+  font-family: var(--mono); font-size: .7rem; letter-spacing:.04em; text-transform: uppercase;
+  padding: .4rem .65rem; border-radius: 999px; cursor:pointer;
   background: transparent; border: 1.4px solid currentColor;
   transition: background .12s ease, color .12s ease;
 }
@@ -209,6 +228,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 .chip--safe{ color: var(--safe-ink); }
 .chip--unverified{ color: var(--unverified-ink); }
 .chip--mild{ color: var(--mild-ink); }
+.chip--gold-std{ color: var(--gold-std-ink); }
 
 .chip:hover[aria-pressed="false"]{ background: rgba(26,36,25,.06); }
 
@@ -217,32 +237,29 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 .chip--safe[aria-pressed="true"]{ background: var(--safe); border-color: var(--safe); color:#fff; }
 .chip--unverified[aria-pressed="true"]{ background: var(--unverified); border-color: var(--unverified); color:#fff; }
 .chip--mild[aria-pressed="true"]{ background: var(--mild); border-color: var(--mild); color:#fff; }
+.chip--gold-std[aria-pressed="true"]{ background: var(--gold-std); border-color: var(--gold-std); color:#fff; }
 
 .chip--tag{ color: var(--ink-soft); }
 .chip--tag[aria-pressed="true"]{ background: var(--ink-soft); border-color: var(--ink-soft); color:#fff; }
 .chip--favorite{ color: var(--toxic-ink); }
 .chip--favorite[aria-pressed="true"]{ background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.chip--category{ color: var(--moss); }
+.chip--category[aria-pressed="true"]{ background: var(--moss); border-color: var(--moss); color:#fff; }
 
-.chip-group{ display:flex; align-items:center; gap:.6rem; }
+.chip-group{ display:flex; flex-direction:column; gap:.5rem; }
 .chip-group__label{
   font-family: var(--mono); font-size: .62rem; letter-spacing:.09em; text-transform: uppercase;
-  color: var(--ink-soft); white-space: nowrap;
-}
-.control-panel__divider{
-  width: 1px; align-self: stretch; background: var(--parchment-dim); margin: 0 .35rem;
-}
-.animal-toggle-wrap{ display:flex; align-items:center; gap:.55rem; }
-.animal-toggle-wrap__label{
-  font-family: var(--mono); font-size: .62rem; letter-spacing:.09em; text-transform: uppercase;
-  color: var(--ink-soft); white-space:nowrap;
+  color: var(--ink-soft);
 }
 
 .clear-btn{
   font-family: var(--sans); font-size: .78rem; color: var(--ink-soft);
   background:none; border:0; text-decoration: underline; cursor:pointer;
   padding: .3rem 0;
-  margin-left: auto;
+  margin-top: 1.1rem;
 }
+
+.content{ flex: 1; min-width: 0; }
 
 /* ============================================================
    RESULTS
@@ -315,6 +332,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 .card__stamp[data-status="SAFE"]{ color: var(--safe); border-color: var(--safe); }
 .card__stamp[data-status="UNVERIFIED"]{ color: var(--unverified); border-color: var(--unverified); border-style: dashed; }
 .card__stamp[data-status="MILD"]{ color: var(--mild); border-color: var(--mild); }
+.card__stamp[data-status="GOLD_STANDARD"]{ color: var(--gold-std); border-color: var(--gold-std); }
 
 .card__top{ padding-right: 5.2rem; padding-left: 2.5rem; margin-bottom: .5rem; }
 .card__name{
@@ -406,17 +424,25 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
    ============================================================ */
 @media (max-width: 640px){
   .drawer-front{ padding: calc(3.2rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-left)) 2.4rem max(1.25rem, env(safe-area-inset-right)); }
-  .control-panel{
-    top: env(safe-area-inset-top);
-    border-radius: 0 0 var(--radius) var(--radius);
-    padding: .85rem 1rem .8rem;
+
+  /* Stack sidebar above content instead of side-by-side; sidebar is no longer
+     sticky here (avoids reintroducing the space-hogging top bar this whole
+     redesign was meant to fix) — the hamburger toggle stays sticky instead. */
+  .app-shell{ flex-direction: column; gap: .85rem; }
+  .sidebar{
+    width: 100%;
+    position: static;
+    max-height: 2000px;
+    transition: max-height .22s ease, padding .22s ease, opacity .15s ease, margin .22s ease;
   }
-  .control-panel__row + .control-panel__row{ margin-top: .6rem; }
-  .chip-group{ flex-direction: column; align-items: flex-start; gap: .35rem; }
-  .control-panel__divider{ display:none; }
-  .control-panel__row--tags{ gap: .85rem; }
-  .clear-btn{ margin-left: 0; padding: .5rem 0; }
-  .animal-toggle-wrap{ margin-left: auto; }
+  .sidebar.is-collapsed{
+    max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; margin: 0; pointer-events: none;
+  }
+  .sidebar__inner{ width: auto; }
+  .sidebar-toggle{ top: max(0.75rem, env(safe-area-inset-top)); }
+
+  .chip-group{ gap: .4rem; }
+  .clear-btn{ padding: .5rem 0; }
   .drawer{ grid-template-columns: 1fr; }
 
   /* Larger tap targets for touch use */
@@ -446,70 +472,87 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
     <p class="eyebrow">Olivia's Field Reference</p>
     <h1>Pet‑Safe&nbsp;Plant Catalog</h1>
     <p class="drawer-front__meta">
-      <span id="specimen-count">124</span> Specimens Catalogued &middot; Toxicity to Cats, Dogs &amp; Horses &middot; Sourced from ASPCA
+      <span id="specimen-count">137</span> Specimens Catalogued &middot; Toxicity to Cats, Dogs &amp; Horses &middot; Sourced from ASPCA
     </p>
   </div>
 </header>
 
 <main>
 
-  <section class="control-panel" aria-label="Search and filter">
-    <div class="control-panel__row">
-      <label class="search-slip">
-        <svg class="search-slip__icon" viewBox="0 0 20 20" aria-hidden="true">
-          <circle cx="8.5" cy="8.5" r="6" fill="none" stroke-width="1.6"/>
-          <line x1="13" y1="13" x2="18" y2="18" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <input type="text" id="search" placeholder="Search common name, scientific name, or family&hellip;" autocomplete="off" aria-label="Search plants by name, scientific name, or family">
-      </label>
+  <div class="app-shell">
 
-      <div class="animal-toggle-wrap">
-        <span class="animal-toggle-wrap__label">Toxicity for</span>
-        <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
-          <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
-          <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
-          <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+    <aside class="sidebar" id="sidebar" aria-label="Search and filter">
+      <div class="sidebar__inner">
+
+        <div class="sidebar__section">
+          <label class="search-slip">
+            <svg class="search-slip__icon" viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="8.5" cy="8.5" r="6" fill="none" stroke-width="1.6"/>
+              <line x1="13" y1="13" x2="18" y2="18" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="search" placeholder="Search name, sci name, family&hellip;" autocomplete="off" aria-label="Search plants by name, scientific name, or family">
+          </label>
         </div>
-      </div>
 
-      <button class="control-panel__toggle" id="toggle-filters" type="button" aria-expanded="true" aria-controls="filters-row" aria-label="Hide filters">Filters<span class="chevron" aria-hidden="true">&#8595;</span></button>
+        <div class="sidebar__section animal-toggle-wrap">
+          <span class="animal-toggle-wrap__label">Toxicity for</span>
+          <div class="animal-toggle" role="group" aria-label="Which animal's toxicity to show">
+            <button class="animal-toggle__btn is-active" data-animal="cat">Cats</button>
+            <button class="animal-toggle__btn" data-animal="dog">Dogs</button>
+            <button class="animal-toggle__btn" data-animal="horse">Horses</button>
+          </div>
+        </div>
+
+        <div class="sidebar__section chip-group">
+          <span class="chip-group__label">Status</span>
+          <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
+            <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">FATAL</button>
+            <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
+            <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
+            <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
+            <button class="chip chip--mild" data-status="MILD" aria-pressed="false">Mild</button>
+            <button class="chip chip--gold-std" data-status="GOLD_STANDARD" aria-pressed="false">GOLD STANDARD</button>
+          </div>
+        </div>
+
+        <div class="sidebar__section chip-group">
+          <span class="chip-group__label">Category</span>
+          <div class="tab-chips" id="category-chips" role="group" aria-label="Filter by flora category">
+            <button class="chip chip--category" data-category="HERB" aria-pressed="false">Herb</button>
+            <button class="chip chip--category" data-category="CUT_FLOWER" aria-pressed="false">Cut Flower</button>
+            <button class="chip chip--category" data-category="GREENERY" aria-pressed="false">Greenery</button>
+            <button class="chip chip--category" data-category="HOUSEPLANT" aria-pressed="false">Houseplant</button>
+            <button class="chip chip--category" data-category="SUCCULENT" aria-pressed="false">Succulent</button>
+          </div>
+        </div>
+
+        <div class="sidebar__section chip-group">
+          <span class="chip-group__label">Show only</span>
+          <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
+            <button class="chip chip--tag" data-tag="SEASONAL" aria-pressed="false">Seasonal</button>
+            <button class="chip chip--tag" data-tag="DRY-FRIENDLY" aria-pressed="false">Dry-friendly</button>
+            <button class="chip chip--tag" data-tag="TJ" aria-pressed="false">At Trader Joe's</button>
+            <button class="chip chip--tag chip--favorite" data-tag="FAVORITE" aria-pressed="false">&#9733; Favorites</button>
+          </div>
+        </div>
+
+        <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
+      </div>
+    </aside>
+
+    <div class="content">
+      <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-controls="sidebar" aria-label="Hide search and filters">&#9776;</button>
+
+      <p class="result-count" id="result-count" aria-live="polite"></p>
+
+      <section class="drawer" id="drawer" aria-label="Plant specimens"></section>
+
+      <p class="empty-state" id="empty-state" hidden>
+        No specimens match that search. Try a different name, or clear filters above.
+      </p>
     </div>
 
-    <div class="control-panel__row control-panel__row--tags" id="filters-row">
-      <div class="chip-group">
-        <span class="chip-group__label">Status</span>
-        <div class="tab-chips" id="status-chips" role="group" aria-label="Filter by safety status">
-          <button class="chip chip--fatal" data-status="FATAL" aria-pressed="false">Fuck No</button>
-          <button class="chip chip--toxic" data-status="TOXIC" aria-pressed="false">Toxic</button>
-          <button class="chip chip--safe" data-status="SAFE" aria-pressed="false">Safe</button>
-          <button class="chip chip--unverified" data-status="UNVERIFIED" aria-pressed="false">Unverified</button>
-          <button class="chip chip--mild" data-status="MILD" aria-pressed="false">Mild</button>
-        </div>
-      </div>
-
-      <div class="control-panel__divider" aria-hidden="true"></div>
-
-      <div class="chip-group">
-        <span class="chip-group__label">Show only</span>
-        <div class="tab-chips tab-chips--muted" id="tag-chips" role="group" aria-label="Filter by attribute">
-          <button class="chip chip--tag" data-tag="SEASONAL" aria-pressed="false">Seasonal</button>
-          <button class="chip chip--tag" data-tag="DRY-FRIENDLY" aria-pressed="false">Dry-friendly</button>
-          <button class="chip chip--tag" data-tag="TJ" aria-pressed="false">At Trader Joe's</button>
-          <button class="chip chip--tag chip--favorite" data-tag="FAVORITE" aria-pressed="false">&#9733; Favorites</button>
-        </div>
-      </div>
-
-      <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
-    </div>
-  </section>
-
-  <p class="result-count" id="result-count" aria-live="polite"></p>
-
-  <section class="drawer" id="drawer" aria-label="Plant specimens"></section>
-
-  <p class="empty-state" id="empty-state" hidden>
-    No specimens match that search. Try a different name, or clear filters above.
-  </p>
+  </div>
 
 </main>
 
@@ -587,6 +630,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "TOXIC-HORSE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -608,6 +654,9 @@ const PLANT_DATA = [
   "retail": "$7-10",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -630,6 +679,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "HOUSEPLANT",
+   "GREENERY"
   ]
  },
  {
@@ -654,7 +707,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE"
   ],
-  "denverNote": "High humidity is non-negotiable for this one in Denver's dry climate — without a humidifier or pebble tray, expect crisping leaf edges."
+  "denverNote": "High humidity is non-negotiable for this one in Denver's dry climate — without a humidifier or pebble tray, expect crisping leaf edges.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Aloe Vera",
@@ -678,7 +734,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE"
   ],
-  "denverNote": "Well-suited to Denver's dry climate. One of the more forgiving succulents to keep locally."
+  "denverNote": "Well-suited to Denver's dry climate. One of the more forgiving succulents to keep locally.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Amaranthus / Love-Lies-Bleeding",
@@ -701,6 +760,10 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
   ]
  },
  {
@@ -725,6 +788,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE",
    "SEASONAL"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -749,6 +815,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -773,7 +842,11 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE"
   ],
-  "denverNote": "Benefits from supplemental humidity in Denver; less forgiving of dry indoor air than the base care note implies."
+  "denverNote": "Benefits from supplemental humidity in Denver; less forgiving of dry indoor air than the base care note implies.",
+  "category": [
+   "CUT_FLOWER",
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Areca Palm",
@@ -794,6 +867,9 @@ const PLANT_DATA = [
   "retail": "$20-35",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -818,6 +894,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY",
+   "HOUSEPLANT"
   ]
  },
  {
@@ -842,7 +922,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy on paper (zone 3-8), but needs part shade and consistent moisture that's harder to maintain in Denver's dry summer heat and wind than the zone map implies. Plan on supplemental watering."
+  "denverNote": "Garden-hardy on paper (zone 3-8), but needs part shade and consistent moisture that's harder to maintain in Denver's dry summer heat and wind than the zone map implies. Plan on supplemental watering.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Autumn Crocus",
@@ -862,9 +945,10 @@ const PLANT_DATA = [
   "wholesale": "n/a — rarely sold as cut flower",
   "retail": "n/a",
   "tags": [
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
-  ]
+  ],
+  "category": []
  },
  {
   "name": "Azalea / Rhododendron",
@@ -884,8 +968,11 @@ const PLANT_DATA = [
   "wholesale": "$8-15 (potted)",
   "retail": "$20-35 (potted)",
   "tags": [
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -912,7 +999,36 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy in Denver and well-matched to alkaline, dry soil. Peak bloom Jun-Aug."
+  "denverNote": "Garden-hardy in Denver and well-matched to alkaline, dry soil. Peak bloom Jun-Aug.",
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
+  ]
+ },
+ {
+  "name": "Basil",
+  "sci": "Ocimum basilicum",
+  "fam": "Lamiaceae",
+  "tj": "Basil",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "Unknown",
+  "principle": "None known — ASPCA's dedicated page confirms non-toxic to dogs and cats directly; horse toxicity isn't listed on that page one way or the other",
+  "climate": "India/tropical Asia",
+  "zone": "10-11 (grown as annual elsewhere)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun to bright indirect",
+  "water": "Keep evenly moist, avoid cold drafts",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Frost-tender — treat strictly as a warm-season annual or bring pots indoors before Denver's first fall freeze (~Oct 5-7); won't overwinter outdoors here.",
+  "tags": [
+   "GOLD_STANDARD"
+  ],
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Bells of Ireland",
@@ -935,6 +1051,9 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -958,7 +1077,10 @@ const PLANT_DATA = [
    "SAFE",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "As a landscape tree, birch needs supplemental watering in Denver and is prone to stress (and borer susceptibility) in our dry, high-altitude conditions. Cut bare-branch decor is unaffected by this."
+  "denverNote": "As a landscape tree, birch needs supplemental watering in Denver and is prone to stress (and borer susceptibility) in our dry, high-altitude conditions. Cut bare-branch decor is unaffected by this.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Bird of Paradise",
@@ -982,6 +1104,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "TOXIC-HORSE",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1004,7 +1129,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Needs active humidity support in Denver. Ambient household humidity here typically runs well below what this plant prefers."
+  "denverNote": "Needs active humidity support in Denver. Ambient household humidity here typically runs well below what this plant prefers.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Blazing Star (Liatris)",
@@ -1027,7 +1155,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy in Denver; bloom tends to land Jul-Aug, slightly later than lowland zone timing due to elevation."
+  "denverNote": "Garden-hardy in Denver; bloom tends to land Jul-Aug, slightly later than lowland zone timing due to elevation.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Boston Fern",
@@ -1049,7 +1180,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Classically fussy about humidity — Denver's dry air (particularly once winter heating is running) will brown fronds without a humidifier or regular misting."
+  "denverNote": "Classically fussy about humidity — Denver's dry air (particularly once winter heating is running) will brown fronds without a humidifier or regular misting.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Boxwood",
@@ -1074,16 +1208,19 @@ const PLANT_DATA = [
    "TOXIC-HORSE",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Marginal in Denver (zone 5b/6a, right at the edge of its 5-9 range). Broadleaf evergreens like this are prone to winter desiccation ('winter burn') here and need wind protection."
+  "denverNote": "Marginal in Denver (zone 5b/6a, right at the edge of its 5-9 range). Broadleaf evergreens like this are prone to winter desiccation ('winter burn') here and need wind protection.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Calathea (assorted)",
   "sci": "Calathea/Goeppertia spp.",
   "fam": "Marantaceae",
   "tj": "Calathea",
-  "cat": "Non-toxic",
-  "dog": "Non-toxic",
-  "horse": "Non-toxic",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "GOLD STANDARD",
   "principle": "Your pets can bite, chew, or play with the leaves without any danger of chemical poisoning or organ damage.",
   "climate": "Tropical Central/South America",
   "zone": "10-12",
@@ -1094,9 +1231,12 @@ const PLANT_DATA = [
   "wholesale": "$5-10",
   "retail": "$12-20",
   "tags": [
-   "SAFE"
+   "GOLD_STANDARD"
   ],
-  "denverNote": "Denver's low ambient humidity (often under 30%, lower once winter heating kicks in) will stress this plant more than the base care note implies — plan on a humidifier or pebble tray."
+  "denverNote": "Denver's low ambient humidity (often under 30%, lower once winter heating kicks in) will stress this plant more than the base care note implies — plan on a humidifier or pebble tray.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Calla Lily",
@@ -1119,6 +1259,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1142,7 +1285,10 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL"
   ],
-  "denverNote": "Not garden-hardy in Denver (zone 7-9 vs. our 5b/6a) — greenhouse/import only, cannot be field-grown locally."
+  "denverNote": "Not garden-hardy in Denver (zone 7-9 vs. our 5b/6a) — greenhouse/import only, cannot be field-grown locally.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Carnation",
@@ -1166,6 +1312,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1187,6 +1336,10 @@ const PLANT_DATA = [
   "retail": "$6-10/leaf",
   "tags": [
    "UNVERIFIED"
+  ],
+  "category": [
+   "GREENERY",
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1209,7 +1362,34 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO"
+   "FATAL"
+  ],
+  "category": []
+ },
+ {
+  "name": "Catnip",
+  "sci": "Nepeta cataria",
+  "fam": "Lamiaceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Unknown",
+  "horse": "Unknown",
+  "principle": "Nepetalactone — surprisingly, ASPCA's own dedicated page lists catnip as mildly toxic to cats (vomiting, diarrhea, and either sedation or overstimulation), not non-toxic as popularly assumed. Doesn't qualify for Gold Standard despite the reputation.",
+  "climate": "Europe/Asia (naturalized in North America)",
+  "zone": "3-9",
+  "season": "Year-round; blooms summer",
+  "light": "Full sun to part shade",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$2-4",
+  "retail": "$6-10",
+  "denverNote": "Garden-hardy and thrives in Denver's dry conditions — but its intensity means a determined cat can flatten or shred a pot fast; keep it away from more delicate neighbors like Calathea if grown indoors.",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -1233,6 +1413,9 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1256,6 +1439,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1277,6 +1463,36 @@ const PLANT_DATA = [
   "retail": "$10-16",
   "tags": [
    "UNVERIFIED"
+  ],
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Chives",
+  "sci": "Allium schoenoprasum",
+  "fam": "Amaryllidaceae",
+  "tj": "",
+  "cat": "Toxic",
+  "dog": "Toxic",
+  "horse": "Toxic",
+  "principle": "N-propyl disulfide — vomiting, breakdown of red blood cells (hemolytic/Heinz body anemia), blood in urine, weakness, elevated heart rate. Same Allium-family mechanism as onion and garlic; a genuinely dangerous kitchen herb despite how casual it looks in a garden.",
+  "climate": "Europe/Asia/North America",
+  "zone": "3-9",
+  "season": "Year-round (fresh herb); blooms late spring",
+  "light": "Full sun to part shade",
+  "water": "Keep evenly moist as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Garden-hardy in Denver — all the more reason to keep it fenced off from a curious cat if grown outdoors, since it will happily overwinter and spread here.",
+  "tags": [
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -1299,6 +1515,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "SUCCULENT"
   ]
  },
  {
@@ -1325,7 +1544,35 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden mums often don't reliably overwinter in Denver's zone 5b despite being sold as perennial — best treated as an annual bedding plant locally. Peak bloom Sep-Oct."
+  "denverNote": "Garden mums often don't reliably overwinter in Denver's zone 5b despite being sold as perennial — best treated as an annual bedding plant locally. Peak bloom Sep-Oct.",
+  "category": [
+   "CUT_FLOWER"
+  ]
+ },
+ {
+  "name": "Cilantro (Coriander)",
+  "sci": "Coriandrum sativum",
+  "fam": "Apiaceae",
+  "tj": "Cilantro",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "GOLD STANDARD",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three (dedicated page verified directly). Despite sharing the Apiaceae family with toxic parsley, cilantro doesn't carry the furanocoumarin chemistry that makes parsley risky.",
+  "climate": "Southern Europe/Mediterranean/Western Asia",
+  "zone": "2-11 (cool-season annual)",
+  "season": "Year-round (fresh herb); bolts quickly in heat",
+  "light": "Full sun to part shade",
+  "water": "Keep evenly moist",
+  "dried": "No (loses flavor dried; sold fresh)",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Bolts fast once Denver's summer heat and intense high-altitude sun arrive — plant it for cool-season harvest in spring or fall rather than mid-summer.",
+  "tags": [
+   "GOLD_STANDARD"
+  ],
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Cosmos",
@@ -1347,6 +1594,9 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1369,6 +1619,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1393,7 +1646,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy in Denver. Pussy willow catkins often appear Feb-Mar here rather than deep winter, timing varies with the last hard freeze."
+  "denverNote": "Garden-hardy in Denver. Pussy willow catkins often appear Feb-Mar here rather than deep winter, timing varies with the last hard freeze.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Cyclamen",
@@ -1415,6 +1671,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1438,6 +1697,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1462,6 +1724,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1483,8 +1748,36 @@ const PLANT_DATA = [
   "retail": "$3-5/stem",
   "tags": [
    "TOXIC-CAT",
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
+  ]
+ },
+ {
+  "name": "Dill",
+  "sci": "Anethum graveolens",
+  "fam": "Apiaceae",
+  "tj": "Dill",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "Essential oils can cause dermatitis with prolonged skin contact, though ASPCA lists the plant itself as non-toxic to all three animals at typical exposure. That contact caveat keeps it at Safe rather than Gold Standard.",
+  "climate": "Mediterranean/Southwest Asia",
+  "zone": "2-11 (annual)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Keep evenly moist",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "tags": [
+   "SAFE",
+   "SEASONAL"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -1509,7 +1802,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Marginal as a landscape tree in Denver — flowering dogwood specifically struggles with our alkaline soil and dry winters. Cut branches for decor are unaffected."
+  "denverNote": "Marginal as a landscape tree in Denver — flowering dogwood specifically struggles with our alkaline soil and dry winters. Cut branches for decor are unaffected.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Dracaena (Draco/Marginata/Reflexa)",
@@ -1531,6 +1827,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1553,6 +1852,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1576,6 +1878,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
@@ -1597,8 +1902,11 @@ const PLANT_DATA = [
   "retail": "$5-9/stem",
   "tags": [
    "TOXIC-CAT",
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1621,7 +1929,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — needs less supplemental care here than in humid regions."
+  "denverNote": "Well-suited to Denver's dry climate — needs less supplemental care here than in humid regions.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Elephant Ear",
@@ -1643,6 +1954,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1666,6 +1980,10 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY",
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1689,6 +2007,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
@@ -1713,7 +2034,34 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Denver's high-altitude sun is more intense than 'bright indirect' typically implies at sea level — watch for leaf scorch near south/west-facing windows, especially in summer."
+  "denverNote": "Denver's high-altitude sun is more intense than 'bright indirect' typically implies at sea level — watch for leaf scorch near south/west-facing windows, especially in summer.",
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Fennel",
+  "sci": "Foeniculum vulgare",
+  "fam": "Umbelliferae",
+  "tj": "",
+  "cat": "Non-toxic",
+  "dog": "Non-toxic",
+  "horse": "Non-toxic",
+  "principle": "None known in normal amounts — ASPCA notes low risk if consumed in small quantities in food; avoid concentrated fennel oil specifically, which is a separate, more potent exposure.",
+  "climate": "Mediterranean",
+  "zone": "6-9 (often grown as annual elsewhere)",
+  "season": "Year-round (fresh herb/bulb)",
+  "light": "Full sun",
+  "water": "Keep evenly moist",
+  "dried": "Yes (seeds)",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-6/bunch",
+  "tags": [
+   "SAFE"
+  ],
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Fittonia / Nerve Plant",
@@ -1735,7 +2083,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Especially prone to crispy leaf edges in Denver's dry indoor air without supplemental humidity — a humidifier or pebble tray is close to essential here."
+  "denverNote": "Especially prone to crispy leaf edges in Denver's dry indoor air without supplemental humidity — a humidifier or pebble tray is close to essential here.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Flapjacks",
@@ -1757,6 +2108,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "SUCCULENT"
   ]
  },
  {
@@ -1779,6 +2133,10 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
   ]
  },
  {
@@ -1802,7 +2160,11 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL"
   ],
-  "denverNote": "Often blooms in Apr rather than Mar in Denver, and flower buds can be damaged by our characteristic late hard freezes even after an early warm spell."
+  "denverNote": "Often blooms in Apr rather than Mar in Denver, and flower buds can be damaged by our characteristic late hard freezes even after an early warm spell.",
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
+  ]
  },
  {
   "name": "Foxglove",
@@ -1824,10 +2186,13 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy as a biennial in Denver, but benefits from winter mulch — zone 5b winters with thin snow cover can be harder on the crown than the zone number suggests. Peak bloom Jun-Jul."
+  "denverNote": "Garden-hardy as a biennial in Denver, but benefits from winter mulch — zone 5b winters with thin snow cover can be harder on the crown than the zone number suggests. Peak bloom Jun-Jul.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Freesia",
@@ -1849,6 +2214,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1871,6 +2239,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1894,6 +2265,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -1916,6 +2290,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -1940,7 +2317,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy and thrives in Denver's dry conditions; peak bloom tends to run Aug-Sep, a bit later than the generic 'late summer-fall' window."
+  "denverNote": "Garden-hardy and thrives in Denver's dry conditions; peak bloom tends to run Aug-Sep, a bit later than the generic 'late summer-fall' window.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Haworthia",
@@ -1962,7 +2342,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — thrives with minimal intervention here."
+  "denverNote": "Well-suited to Denver's dry climate — thrives with minimal intervention here.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Heartleaf Philodendron",
@@ -1984,6 +2367,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2007,7 +2393,10 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy biennial in Denver; benefits from a wind-sheltered spot given local exposure. Peak bloom Jul-Aug."
+  "denverNote": "Garden-hardy biennial in Denver; benefits from a wind-sheltered spot given local exposure. Peak bloom Jul-Aug.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Hosta (Plantain Lily)",
@@ -2031,7 +2420,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy, but needs part-to-full shade and consistent moisture — more watering-intensive in Denver's dry climate than the base care note implies."
+  "denverNote": "Garden-hardy, but needs part-to-full shade and consistent moisture — more watering-intensive in Denver's dry climate than the base care note implies.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Hoya / Wax Plant",
@@ -2052,6 +2444,9 @@ const PLANT_DATA = [
   "retail": "$12-20",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2075,6 +2470,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2101,7 +2499,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Hydrangea macrophylla (mophead) commonly loses flower buds to Denver's late spring frosts since it blooms on old wood — panicle-type hydrangeas (H. paniculata) are a more reliable local choice."
+  "denverNote": "Hydrangea macrophylla (mophead) commonly loses flower buds to Denver's late spring frosts since it blooms on old wood — panicle-type hydrangeas (H. paniculata) are a more reliable local choice.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Iris (Bearded/Flag)",
@@ -2125,7 +2526,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy and extremely well-suited to Denver's dry, sunny conditions once established. Peak bloom tends to land May-Jun, a bit later than lowland zone timing."
+  "denverNote": "Garden-hardy and extremely well-suited to Denver's dry, sunny conditions once established. Peak bloom tends to land May-Jun, a bit later than lowland zone timing.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Jade Plant",
@@ -2149,7 +2553,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — one of the easier houseplants to keep locally."
+  "denverNote": "Well-suited to Denver's dry climate — one of the easier houseplants to keep locally.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Larkspur / Delphinium",
@@ -2171,10 +2578,13 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy in Denver (perennial types); benefits from staking given wind exposure at altitude. Peak bloom tends to run Jun-Jul here."
+  "denverNote": "Garden-hardy in Denver (perennial types); benefits from staking given wind exposure at altitude. Peak bloom tends to run Jun-Jul here.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Lavender",
@@ -2200,7 +2610,11 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Actually well-suited to Denver despite the borderline zone rating — dry soil and alkaline pH match its native Mediterranean preferences. Peak bloom Jun-Jul."
+  "denverNote": "Actually well-suited to Denver despite the borderline zone rating — dry soil and alkaline pH match its native Mediterranean preferences. Peak bloom Jun-Jul.",
+  "category": [
+   "HERB",
+   "GREENERY"
+  ]
  },
  {
   "name": "Leatherleaf Fern",
@@ -2222,6 +2636,34 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
+  ]
+ },
+ {
+  "name": "Lemon Balm",
+  "sci": "Melissa officinalis",
+  "fam": "Lamiaceae",
+  "tj": "",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "GOLD STANDARD",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three (dedicated page verified directly). Mint-family herb with a lemony scent — unrelated to actual citrus, which is toxic to cats.",
+  "climate": "Southern Europe (naturalized across North America)",
+  "zone": "4-9",
+  "season": "Year-round (fresh herb); blooms summer",
+  "light": "Full sun to part shade",
+  "water": "Keep evenly moist",
+  "dried": "Yes",
+  "wholesale": "$2-3/bunch",
+  "retail": "$5-7/bunch",
+  "denverNote": "Garden-hardy in Denver and spreads aggressively by rhizome once established — best contained to a pot rather than let loose in a bed.",
+  "tags": [
+   "GOLD_STANDARD"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -2244,10 +2686,13 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO",
+   "FATAL",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy in Denver; bloom typically lands in May rather than Apr, and part-to-full shade is important given how intense high-altitude sun gets."
+  "denverNote": "Garden-hardy in Denver; bloom typically lands in May rather than Apr, and part-to-full shade is important given how intense high-altitude sun gets.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Lisianthus",
@@ -2269,6 +2714,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2292,6 +2740,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2315,7 +2766,36 @@ const PLANT_DATA = [
    "SAFE",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Not reliably garden-hardy in Denver — M. grandiflora is rated zone 6-10 and is uncommon in local landscapes; source as cut greenery/import."
+  "denverNote": "Not reliably garden-hardy in Denver — M. grandiflora is rated zone 6-10 and is uncommon in local landscapes; source as cut greenery/import.",
+  "category": [
+   "GREENERY"
+  ]
+ },
+ {
+  "name": "Marjoram",
+  "sci": "Origanum majorana",
+  "fam": "Lamiaceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Unknown",
+  "principle": "Gastrointestinal irritants — vomiting and diarrhea. ASPCA's dedicated page lists dog and cat toxicity but doesn't specify horses.",
+  "climate": "Mediterranean/Western Asia",
+  "zone": "9-11 (tender perennial, often grown as annual)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG"
+  ],
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Mint",
@@ -2338,6 +2818,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -2359,6 +2842,9 @@ const PLANT_DATA = [
   "retail": "$20-35",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2381,8 +2867,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO"
-  ]
+   "FATAL"
+  ],
+  "category": []
  },
  {
   "name": "Olive Branch",
@@ -2405,7 +2892,10 @@ const PLANT_DATA = [
    "SAFE",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Not garden-hardy in Denver (zone 8-11) — the Mediterranean climate mismatch goes beyond cold hardiness; source as cut greenery only."
+  "denverNote": "Not garden-hardy in Denver (zone 8-11) — the Mediterranean climate mismatch goes beyond cold hardiness; source as cut greenery only.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Orchid (Phalaenopsis)",
@@ -2426,6 +2916,37 @@ const PLANT_DATA = [
   "retail": "$25-50",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Oregano",
+  "sci": "Origanum vulgare hirtum",
+  "fam": "Lamiaceae",
+  "tj": "Oregano",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic (mild)",
+  "principle": "Gastrointestinal irritants — mild vomiting and diarrhea. A common surprise: basil and oregano are both Lamiaceae kitchen herbs, but basil is ASPCA non-toxic and oregano isn't — the difference is chemistry (carvacrol/thymol), not family.",
+  "climate": "Mediterranean",
+  "zone": "4-8",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Garden-hardy and thrives in Denver's dry conditions once established.",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -2448,6 +2969,9 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
@@ -2471,7 +2995,10 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — low-fuss here compared to humid regions."
+  "denverNote": "Well-suited to Denver's dry climate — low-fuss here compared to humid regions.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Parlor Palm",
@@ -2492,6 +3019,36 @@ const PLANT_DATA = [
   "retail": "$15-25",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
+  ]
+ },
+ {
+  "name": "Parsley",
+  "sci": "Petroselinum crispum",
+  "fam": "Apiaceae",
+  "tj": "Parsley",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic (mild)",
+  "principle": "Furanocoumarins — photosensitization (sunburn-like dermatitis); large amounts are needed to cause this effect. Note: this is true culinary parsley (Petroselinum crispum), not the unrelated 'Parsley Fern,' which ASPCA lists as fully non-toxic.",
+  "climate": "Mediterranean",
+  "zone": "5-9 (biennial, usually grown as annual)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun to part shade",
+  "water": "Keep evenly moist",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -2514,6 +3071,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2539,7 +3099,10 @@ const PLANT_DATA = [
    "MILD",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy in Denver (zone 5b/6a). Peak bloom typically shifts to late May-June here, sometimes into early July, rather than the generic May-Jun window."
+  "denverNote": "Garden-hardy in Denver (zone 5b/6a). Peak bloom typically shifts to late May-June here, sometimes into early July, rather than the generic May-Jun window.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Peperomia (assorted)",
@@ -2560,6 +3123,9 @@ const PLANT_DATA = [
   "retail": "$8-14",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2582,6 +3148,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2605,6 +3174,9 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2627,7 +3199,10 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED"
   ],
-  "denverNote": "Not garden-hardy in Denver (zone 8-11) — import/greenhouse only."
+  "denverNote": "Not garden-hardy in Denver (zone 8-11) — import/greenhouse only.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Poinsettia",
@@ -2651,6 +3226,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "SEASONAL"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2673,7 +3251,11 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — genuinely low-maintenance locally."
+  "denverNote": "Well-suited to Denver's dry climate — genuinely low-maintenance locally.",
+  "category": [
+   "SUCCULENT",
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Prayer Plant",
@@ -2695,7 +3277,10 @@ const PLANT_DATA = [
   "tags": [
    "SAFE"
   ],
-  "denverNote": "Denver's dry indoor air (especially in winter) will stress this plant beyond what 'keep consistently moist' suggests — supplemental humidity recommended."
+  "denverNote": "Denver's dry indoor air (especially in winter) will stress this plant beyond what 'keep consistently moist' suggests — supplemental humidity recommended.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Protea",
@@ -2718,6 +3303,9 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2741,6 +3329,9 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2765,6 +3356,9 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -2789,7 +3383,35 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Generally reliable in Denver with winter protection (mounding) for hybrid teas; shrub roses are lower-maintenance locally."
+  "denverNote": "Generally reliable in Denver with winter protection (mounding) for hybrid teas; shrub roses are lower-maintenance locally.",
+  "category": [
+   "CUT_FLOWER"
+  ]
+ },
+ {
+  "name": "Rosemary",
+  "sci": "Rosmarinus officinalis",
+  "fam": "Lamiaceae",
+  "tj": "Rosemary",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "GOLD STANDARD",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three (dedicated page verified directly). Most cats ignore it after one sniff of the resinous, piney scent anyway.",
+  "climate": "Mediterranean",
+  "zone": "8-10 (tender perennial)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry fully between waterings",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Not reliably garden-hardy in Denver's zone 5b/6a (rosemary wants zone 8+) — grow it as a container plant that comes indoors for winter rather than a permanent garden bed resident.",
+  "tags": [
+   "GOLD_STANDARD"
+  ],
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Rubber Plant",
@@ -2813,7 +3435,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Denver's intense high-altitude light can scorch this plant faster than the base care note implies near unfiltered south/west windows."
+  "denverNote": "Denver's intense high-altitude light can scorch this plant faster than the base care note implies near unfiltered south/west windows.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Ruscus (Israeli Ruscus)",
@@ -2835,6 +3460,34 @@ const PLANT_DATA = [
   "tags": [
    "UNVERIFIED",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "GREENERY"
+  ]
+ },
+ {
+  "name": "Sage",
+  "sci": "Salvia officinalis",
+  "fam": "Lamiaceae",
+  "tj": "Sage",
+  "cat": "GOLD STANDARD",
+  "dog": "GOLD STANDARD",
+  "horse": "GOLD STANDARD",
+  "principle": "None known — ASPCA-confirmed non-toxic to all three (dedicated page verified directly).",
+  "climate": "Mediterranean",
+  "zone": "5-8",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$1-2/bunch",
+  "retail": "$3-5/bunch",
+  "denverNote": "Garden-hardy and genuinely well-suited to Denver's dry, alkaline conditions — one of the easier perennial herbs to keep here.",
+  "tags": [
+   "GOLD_STANDARD"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -2857,7 +3510,10 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG",
-   "FUCK NO"
+   "FATAL"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2881,7 +3537,10 @@ const PLANT_DATA = [
    "UNVERIFIED",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Poor climate match for Denver regardless of zone rating — native to moist Pacific Northwest understory and will struggle with our dryness even as a houseplant experiment; source as cut greenery."
+  "denverNote": "Poor climate match for Denver regardless of zone rating — native to moist Pacific Northwest understory and will struggle with our dryness even as a houseplant experiment; source as cut greenery.",
+  "category": [
+   "GREENERY"
+  ]
  },
  {
   "name": "Schefflera / Umbrella Tree",
@@ -2903,6 +3562,9 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -2927,7 +3589,10 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Drought-tolerant and well-matched to Denver's dry climate despite the borderline zone rating."
+  "denverNote": "Drought-tolerant and well-matched to Denver's dry climate despite the borderline zone rating.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Smilax (florist vine)",
@@ -2948,6 +3613,9 @@ const PLANT_DATA = [
   "retail": "$10-18/bunch",
   "tags": [
    "UNVERIFIED"
+  ],
+  "category": [
+   "GREENERY"
   ]
  },
  {
@@ -2972,7 +3640,11 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Well-suited to Denver's dry climate — very low-maintenance here."
+  "denverNote": "Well-suited to Denver's dry climate — very low-maintenance here.",
+  "category": [
+   "SUCCULENT",
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Snapdragon",
@@ -2994,6 +3666,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3015,6 +3690,9 @@ const PLANT_DATA = [
   "retail": "$7-10",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -3038,6 +3716,9 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3059,6 +3740,9 @@ const PLANT_DATA = [
   "retail": "$5-9/stem",
   "tags": [
    "SAFE"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3081,6 +3765,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3105,7 +3792,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Well-suited to Denver's dry climate, though still benefits from bright light to avoid stretching at altitude."
+  "denverNote": "Well-suited to Denver's dry climate, though still benefits from bright light to avoid stretching at altitude.",
+  "category": [
+   "SUCCULENT"
+  ]
  },
  {
   "name": "Sunflower",
@@ -3128,6 +3818,9 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3152,6 +3845,37 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
+  ]
+ },
+ {
+  "name": "Tarragon",
+  "sci": "Artemisia dracunculus",
+  "fam": "Asteraceae",
+  "tj": "",
+  "cat": "Toxic (mild)",
+  "dog": "Toxic (mild)",
+  "horse": "Toxic (mild)",
+  "principle": "Essential oils — mild vomiting and diarrhea.",
+  "climate": "Central Asia/Siberia",
+  "zone": "4-8 (French tarragon)",
+  "season": "Year-round (fresh herb)",
+  "light": "Full sun",
+  "water": "Let dry between waterings as potted herb",
+  "dried": "Yes",
+  "wholesale": "$2-3/bunch",
+  "retail": "$5-7/bunch",
+  "denverNote": "Garden-hardy in Denver; French tarragon (the culinary type) is more particular about drainage than Russian tarragon, so err toward gritty, fast-draining soil here.",
+  "tags": [
+   "MILD",
+   "TOXIC-CAT",
+   "TOXIC-DOG",
+   "TOXIC-HORSE"
+  ],
+  "category": [
+   "HERB"
   ]
  },
  {
@@ -3175,7 +3899,10 @@ const PLANT_DATA = [
    "SAFE",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Thrives in Denver's dry, alkaline soil despite the borderline zone rating — one of the more foolproof herbs for local gardens."
+  "denverNote": "Thrives in Denver's dry, alkaline soil despite the borderline zone rating — one of the more foolproof herbs for local gardens.",
+  "category": [
+   "HERB"
+  ]
  },
  {
   "name": "Ti Plant / Cordyline",
@@ -3197,6 +3924,10 @@ const PLANT_DATA = [
   "tags": [
    "TOXIC-CAT",
    "TOXIC-DOG"
+  ],
+  "category": [
+   "GREENERY",
+   "HOUSEPLANT"
   ]
  },
  {
@@ -3220,6 +3951,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3241,6 +3975,9 @@ const PLANT_DATA = [
   "retail": "$12-18",
   "tags": [
    "UNVERIFIED"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -3264,7 +4001,10 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL"
   ],
-  "denverNote": "Garden-hardy and a reliable performer in Denver's dry conditions. Peak bloom Jun-Aug."
+  "denverNote": "Garden-hardy and a reliable performer in Denver's dry conditions. Peak bloom Jun-Aug.",
+  "category": [
+   "CUT_FLOWER"
+  ]
  },
  {
   "name": "Wax Flower",
@@ -3287,6 +4027,9 @@ const PLANT_DATA = [
    "SAFE",
    "SEASONAL",
    "DRY-FRIENDLY"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  },
  {
@@ -3311,7 +4054,10 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "MILD"
   ],
-  "denverNote": "Sensitive to both light intensity and being moved — Denver's strong high-altitude sun through south/west windows can scorch leaves faster than expected, on top of this plant's usual fussiness about relocation."
+  "denverNote": "Sensitive to both light intensity and being moved — Denver's strong high-altitude sun through south/west windows can scorch leaves faster than expected, on top of this plant's usual fussiness about relocation.",
+  "category": [
+   "HOUSEPLANT"
+  ]
  },
  {
   "name": "Wisteria",
@@ -3335,7 +4081,11 @@ const PLANT_DATA = [
    "TOXIC-DOG",
    "SEASONAL"
   ],
-  "denverNote": "Flower buds are frost-vulnerable and often damaged by Denver's late spring freezes — the vine survives winters fine, but bloom is inconsistent year to year here."
+  "denverNote": "Flower buds are frost-vulnerable and often damaged by Denver's late spring freezes — the vine survives winters fine, but bloom is inconsistent year to year here.",
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
+  ]
  },
  {
   "name": "Yarrow",
@@ -3360,7 +4110,11 @@ const PLANT_DATA = [
    "SEASONAL",
    "DRY-FRIENDLY"
   ],
-  "denverNote": "Garden-hardy and genuinely well-suited to Denver's dry, high-altitude summer sun and alkaline soil; low-fuss once established. Peak bloom Jun-Aug."
+  "denverNote": "Garden-hardy and genuinely well-suited to Denver's dry, high-altitude summer sun and alkaline soil; low-fuss once established. Peak bloom Jun-Aug.",
+  "category": [
+   "CUT_FLOWER",
+   "GREENERY"
+  ]
  },
  {
   "name": "ZZ Plant",
@@ -3383,6 +4137,9 @@ const PLANT_DATA = [
    "TOXIC-CAT",
    "TOXIC-DOG",
    "MILD"
+  ],
+  "category": [
+   "HOUSEPLANT"
   ]
  },
  {
@@ -3405,6 +4162,9 @@ const PLANT_DATA = [
   "tags": [
    "SAFE",
    "SEASONAL"
+  ],
+  "category": [
+   "CUT_FLOWER"
   ]
  }
 ];
@@ -3415,11 +4175,12 @@ const PLANT_DATA = [
   const state = {
     animal: "cat",
     search: "",
-    statuses: new Set(),   // FATAL | TOXIC | SAFE | UNVERIFIED
-    tags: new Set(),       // SEASONAL | DRY-FRIENDLY | TJ | FAVORITE
+    statuses: new Set(),    // FATAL | TOXIC | SAFE | UNVERIFIED | MILD | GOLD_STANDARD
+    categories: new Set(),  // HERB | CUT_FLOWER | GREENERY | HOUSEPLANT | SUCCULENT
+    tags: new Set(),        // SEASONAL | DRY-FRIENDLY | TJ | FAVORITE
     plants: [],
-    favorites: new Set(),  // plant names the user has starred
-    filtersCollapsed: false,
+    favorites: new Set(),   // plant names the user has starred
+    sidebarCollapsed: false,
   };
 
   const FAVORITES_KEY = "favorites";
@@ -3464,8 +4225,8 @@ const PLANT_DATA = [
   const specimenCountEl = document.getElementById("specimen-count");
   const cardTemplate = document.getElementById("card-template");
   const clearBtn = document.getElementById("clear-filters");
-  const controlPanelEl = document.querySelector(".control-panel");
-  const toggleFiltersBtn = document.getElementById("toggle-filters");
+  const sidebarEl = document.getElementById("sidebar");
+  const sidebarToggleBtn = document.getElementById("sidebar-toggle");
   const exportFavsBtn = document.getElementById("export-favs");
   const importFavsBtn = document.getElementById("import-favs");
 
@@ -3474,6 +4235,7 @@ const PLANT_DATA = [
     if (!text) return "UNVERIFIED";
     const t = text.trim();
     if (/^FATAL/i.test(t)) return "FATAL";
+    if (/^GOLD STANDARD/i.test(t)) return "GOLD_STANDARD";
     if (/^Mild/i.test(t)) return "MILD";
     if (/^Non-toxic/i.test(t)) return "SAFE";
     if (/^Toxic/i.test(t)) return "TOXIC";
@@ -3481,11 +4243,12 @@ const PLANT_DATA = [
   }
 
   const STATUS_LABEL = {
-    FATAL: "Fuck No",
+    FATAL: "FATAL",
     TOXIC: "Toxic",
     SAFE: "Safe",
     UNVERIFIED: "Unverified",
     MILD: "Mild",
+    GOLD_STANDARD: "GOLD STANDARD",
   };
 
   // -------- load embedded data (no fetch, no separate file, no path to break) --------
@@ -3493,6 +4256,8 @@ const PLANT_DATA = [
     try {
       state.plants = PLANT_DATA;
       specimenCountEl.textContent = PLANT_DATA.length;
+      state.sidebarCollapsed = window.matchMedia("(max-width: 640px)").matches;
+      applySidebarCollapsed();
       await loadFavorites();
       render();
     } catch (err) {
@@ -3502,19 +4267,19 @@ const PLANT_DATA = [
     }
   })();
 
-  // -------- collapsible filters (keeps search visible, hides the bulky chip rows) --------
-  function applyFiltersCollapsed() {
-    controlPanelEl.classList.toggle("control-panel--collapsed", state.filtersCollapsed);
-    toggleFiltersBtn.setAttribute("aria-expanded", String(!state.filtersCollapsed));
-    toggleFiltersBtn.setAttribute(
+  // -------- collapsible sidebar (hamburger toggle, folds the whole panel away) --------
+  function applySidebarCollapsed() {
+    sidebarEl.classList.toggle("is-collapsed", state.sidebarCollapsed);
+    sidebarToggleBtn.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
+    sidebarToggleBtn.setAttribute(
       "aria-label",
-      state.filtersCollapsed ? "Show filters" : "Hide filters"
+      state.sidebarCollapsed ? "Show search and filters" : "Hide search and filters"
     );
   }
 
-  toggleFiltersBtn.addEventListener("click", () => {
-    state.filtersCollapsed = !state.filtersCollapsed;
-    applyFiltersCollapsed();
+  sidebarToggleBtn.addEventListener("click", () => {
+    state.sidebarCollapsed = !state.sidebarCollapsed;
+    applySidebarCollapsed();
   });
 
   // -------- export / import favorites (bridges storage across artifact versions) --------
@@ -3548,23 +4313,7 @@ const PLANT_DATA = [
 
   // -------- wire up controls --------
   document.getElementById("search").addEventListener("input", (e) => {
-    const hadSearch = state.search !== "";
     state.search = e.target.value.trim().toLowerCase();
-
-    // First time typing a search on a phone-sized screen, fold the filter
-    // rows away automatically so results are visible right away. Only
-    // triggers on the empty -> non-empty transition, so it never fights a
-    // manual re-expand.
-    if (
-      !hadSearch &&
-      state.search !== "" &&
-      !state.filtersCollapsed &&
-      window.matchMedia("(max-width: 640px)").matches
-    ) {
-      state.filtersCollapsed = true;
-      applyFiltersCollapsed();
-    }
-
     render();
   });
 
@@ -3593,6 +4342,20 @@ const PLANT_DATA = [
     });
   });
 
+  document.querySelectorAll("#category-chips .chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const c = chip.dataset.category;
+      if (state.categories.has(c)) {
+        state.categories.delete(c);
+        chip.setAttribute("aria-pressed", "false");
+      } else {
+        state.categories.add(c);
+        chip.setAttribute("aria-pressed", "true");
+      }
+      render();
+    });
+  });
+
   document.querySelectorAll("#tag-chips .chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       const t = chip.dataset.tag;
@@ -3610,13 +4373,12 @@ const PLANT_DATA = [
   clearBtn.addEventListener("click", () => {
     state.search = "";
     state.statuses.clear();
+    state.categories.clear();
     state.tags.clear();
     document.getElementById("search").value = "";
     document
       .querySelectorAll(".chip")
       .forEach((c) => c.setAttribute("aria-pressed", "false"));
-    state.filtersCollapsed = false;
-    applyFiltersCollapsed();
     render();
   });
 
@@ -3630,6 +4392,12 @@ const PLANT_DATA = [
     if (state.statuses.size > 0) {
       const status = classify(plant[state.animal]);
       if (!state.statuses.has(status)) return false;
+    }
+
+    if (state.categories.size > 0) {
+      const plantCategories = plant.category || [];
+      const anyCategoryMatch = plantCategories.some((c) => state.categories.has(c));
+      if (!anyCategoryMatch) return false;
     }
 
     if (state.tags.size > 0) {
@@ -3659,6 +4427,7 @@ const PLANT_DATA = [
     clearBtn.hidden = !(
       state.search ||
       state.statuses.size > 0 ||
+      state.categories.size > 0 ||
       state.tags.size > 0
     );
 
