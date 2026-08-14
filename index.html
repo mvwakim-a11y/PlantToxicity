@@ -259,6 +259,14 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
   margin-top: 1.1rem;
 }
 
+.sidebar-backdrop{
+  display:none;
+}
+
+.sidebar-close{
+  display:none;
+}
+
 .content{ flex: 1; min-width: 0; }
 
 /* ============================================================
@@ -425,31 +433,73 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 @media (max-width: 640px){
   .drawer-front{ padding: calc(3.2rem + env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-left)) 2.4rem max(1.25rem, env(safe-area-inset-right)); }
 
-  /* Stack sidebar above content instead of side-by-side; sidebar is no longer
-     sticky here (avoids reintroducing the space-hogging top bar this whole
-     redesign was meant to fix) — the hamburger toggle stays sticky instead. */
-  .app-shell{ flex-direction: column; gap: .85rem; }
+  /* On phones the sidebar becomes a true off-canvas overlay — fixed in
+     place, sliding in from the left over the content — rather than an
+     inline block that pushes/squashes the page. This means toggling it
+     no longer depends on scroll position, and closing it doesn't leave
+     a tall empty gap where the panel used to be. */
+  .app-shell{ display:block; }
   .sidebar{
-    width: 100%;
-    position: static;
-    max-height: 2000px;
-    transition: max-height .22s ease, padding .22s ease, opacity .15s ease, margin .22s ease;
+    position: fixed;
+    top: 0; left: 0;
+    width: min(82vw, 300px);
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: 8px 0 28px rgba(0,0,0,.4);
+    z-index: 100;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: calc(1rem + env(safe-area-inset-top)) 1rem calc(1rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    transform: translateX(-105%);
+    transition: transform .24s ease;
+    opacity: 1; pointer-events: auto;
   }
   .sidebar.is-collapsed{
-    max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; margin: 0; pointer-events: none;
+    width: min(82vw, 300px);
+    transform: translateX(-105%);
+    padding: calc(1rem + env(safe-area-inset-top)) 1rem calc(1rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    opacity: 1; pointer-events: none;
   }
+  .sidebar:not(.is-collapsed){ transform: translateX(0); pointer-events: auto; }
   .sidebar__inner{ width: auto; }
+
+  .sidebar-close{
+    display:flex; align-items:center; justify-content:center;
+    width: 30px; height: 30px;
+    margin: 0 0 .6rem auto;
+    border: 1.5px solid var(--parchment-dim);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sidebar-backdrop{
+    display:block;
+    position: fixed; inset: 0;
+    background: rgba(23,33,25,.5);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .sidebar-backdrop.is-visible{ opacity: 1; pointer-events: auto; }
+
   .sidebar-toggle{ top: max(0.75rem, env(safe-area-inset-top)); }
 
-  .chip-group{ gap: .4rem; }
+  .sidebar__section + .sidebar__section{ margin-top: .8rem; padding-top: .75rem; }
+  .chip-group{ gap: .35rem; }
   .clear-btn{ padding: .5rem 0; }
   .drawer{ grid-template-columns: 1fr; }
 
-  /* Larger tap targets for touch use */
-  .chip{ padding: .55rem .85rem; min-height: 38px; display:inline-flex; align-items:center; }
-  .animal-toggle__btn{ padding: .65rem .9rem; min-height: 40px; }
+  /* Tap targets sized for touch without feeling oversized in a narrow panel */
+  .chip{ padding: .45rem .7rem; min-height: 34px; display:inline-flex; align-items:center; font-size: .68rem; }
+  .animal-toggle__btn{ padding: .55rem .5rem; min-height: 36px; }
   .card__expand{ padding: .5rem 0; min-height: 40px; }
-  .card__favorite{ width: 38px; height: 38px; font-size: 1.15rem; top: .6rem; left: .6rem; }
+  .card__favorite{ width: 36px; height: 36px; font-size: 1.1rem; top: .6rem; left: .6rem; }
   .card__stamp{ top: .6rem; right: .6rem; }
 }
 
@@ -483,6 +533,7 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
 
     <aside class="sidebar" id="sidebar" aria-label="Search and filter">
       <div class="sidebar__inner">
+        <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Close filters">&times;</button>
 
         <div class="sidebar__section">
           <label class="search-slip">
@@ -539,6 +590,8 @@ main{ max-width: var(--max-w); margin: 0 auto; padding: 0 max(1.25rem, env(safe-
         <button class="clear-btn" id="clear-filters" hidden>Clear filters</button>
       </div>
     </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
     <div class="content">
       <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-expanded="true" aria-controls="sidebar" aria-label="Hide search and filters">&#9776;</button>
@@ -4227,6 +4280,8 @@ const PLANT_DATA = [
   const clearBtn = document.getElementById("clear-filters");
   const sidebarEl = document.getElementById("sidebar");
   const sidebarToggleBtn = document.getElementById("sidebar-toggle");
+  const sidebarBackdropEl = document.getElementById("sidebar-backdrop");
+  const sidebarCloseBtn = document.getElementById("sidebar-close");
   const exportFavsBtn = document.getElementById("export-favs");
   const importFavsBtn = document.getElementById("import-favs");
 
@@ -4270,6 +4325,7 @@ const PLANT_DATA = [
   // -------- collapsible sidebar (hamburger toggle, folds the whole panel away) --------
   function applySidebarCollapsed() {
     sidebarEl.classList.toggle("is-collapsed", state.sidebarCollapsed);
+    sidebarBackdropEl.classList.toggle("is-visible", !state.sidebarCollapsed);
     sidebarToggleBtn.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
     sidebarToggleBtn.setAttribute(
       "aria-label",
@@ -4279,6 +4335,16 @@ const PLANT_DATA = [
 
   sidebarToggleBtn.addEventListener("click", () => {
     state.sidebarCollapsed = !state.sidebarCollapsed;
+    applySidebarCollapsed();
+  });
+
+  sidebarBackdropEl.addEventListener("click", () => {
+    state.sidebarCollapsed = true;
+    applySidebarCollapsed();
+  });
+
+  sidebarCloseBtn.addEventListener("click", () => {
+    state.sidebarCollapsed = true;
     applySidebarCollapsed();
   });
 
