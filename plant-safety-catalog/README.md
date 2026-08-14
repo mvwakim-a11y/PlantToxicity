@@ -3,7 +3,7 @@
 A searchable, filterable field reference for pet toxicity in floral work — 124 specimens,
 each sourced from ASPCA's plant-specific toxicity pages and verified individually.
 
-**Live demo (once deployed):** `https://<your-username>.github.io/<repo-name>/`
+**Live demo (once deployed):** `https://mvwakim-a11y.github.io/PlantToxicity/`
 
 ## What's here
 
@@ -52,7 +52,7 @@ git init
 git add .
 git commit -m "Initial plant catalog"
 git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
+git remote add origin https://mvwakim-a11y.github.io/PlantToxicity/
 git push -u origin main
 ```
 
